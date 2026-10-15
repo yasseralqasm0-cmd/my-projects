@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="برنامج مذاكرة الملف 6 من التحليل الإنشائي: القوى الداخلية، SFD و BMD، أمثلة محلولة وحاسبة.">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>القوى الداخلية CE 360</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Kufi+Arabic:wght@600;800&family=JetBrains+Mono:wght@400;600&family=STIX+Two+Text:wght@400;600&display=swap">
+<style>
+/* Layout: drafting-sheet study app. Sticky tab bar; each tab is one "sheet". V is always blue, M is always copper, loads are steel teal, reactions are red. */
+:root{
+  --bg:#e9eeec; --panel:#fbfcfb; --ink:#14212a; --muted:#56646b; --line:#cdd7d3; --code:#eef3f1;
+  --steel:#0b6e6c; --steel-soft:#d6ebe8;
+  --vcol:#1f5fa8; --vsoft:#dbe6f5; --mcol:#b0521a; --msoft:#f5e2d3; --rx:#b2362b;
+  --ok:#2c7a3a; --oksoft:#dcefdf; --warn:#8a5a00; --warnsoft:#f6e8c9;
+  --f-display:"Noto Kufi Arabic","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --f-body:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
+  --f-math:"STIX Two Text","Cambria Math",Cambria,"Times New Roman",serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1615; --panel:#152120; --ink:#e3ecea; --muted:#97a7a3; --line:#2b3b38; --code:#1b2a28;
+  --steel:#4fc2bc; --steel-soft:#173634; --vcol:#7fb0ef; --vsoft:#18283f; --mcol:#f0a06a; --msoft:#3a261a; --rx:#f08a7e;
+  --ok:#7fcf8c; --oksoft:#173322; --warn:#e9c46a; --warnsoft:#33290f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1615; --panel:#152120; --ink:#e3ecea; --muted:#97a7a3; --line:#2b3b38; --code:#1b2a28;
+  --steel:#4fc2bc; --steel-soft:#173634; --vcol:#7fb0ef; --vsoft:#18283f; --mcol:#f0a06a; --msoft:#3a261a; --rx:#f08a7e;
+  --ok:#7fcf8c; --oksoft:#173322; --warn:#e9c46a; --warnsoft:#33290f; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.8;direction:rtl}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 60px}
+h1,h2,h3,h4{font-family:var(--f-display);text-wrap:balance;line-height:1.5;margin:0}
+button{font:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:2px solid var(--steel);outline-offset:2px}
+a{color:var(--steel)}
+.ltr{direction:ltr;unicode-bidi:isolate}
+.m{font-family:var(--f-math);direction:ltr;unicode-bidi:isolate}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+
+/* header */
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:12px}
+.top h1{font-size:clamp(1.45rem,5vw,2.05rem);font-weight:800}
+.top p{margin:2px 0 0;color:var(--muted);font-size:.95rem}
+.tblock{font-family:var(--f-mono);font-size:.74rem;color:var(--muted);border:1px solid var(--ink);direction:ltr;display:grid;grid-template-columns:auto auto}
+.tblock span{padding:2px 8px;border-bottom:1px solid var(--line)}
+.tblock span:nth-child(odd){border-right:1px solid var(--line);color:var(--steel)}
+.tblock span:nth-last-child(-n+2){border-bottom:0}
+
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);display:flex;gap:6px;overflow-x:auto;padding-block:10px;margin-bottom:14px;border-bottom:1px solid var(--line)}
+.tabs a{white-space:nowrap;text-decoration:none;color:var(--ink);border:1px solid var(--line);background:var(--panel);padding:6px 14px;border-radius:999px;font-size:.92rem}
+.tabs a.on{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+
+.lead{color:var(--muted);margin:0 0 14px;max-width:68ch}
+.sheet{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;min-width:0}
+.stack{display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-size:.76rem;letter-spacing:.08em;color:var(--steel);font-weight:700}
+
+/* study plan */
+.prog{display:flex;align-items:center;gap:10px;font-size:.9rem;color:var(--muted)}
+.prog .bar{flex:1;height:8px;background:var(--line);border-radius:6px;overflow:hidden}
+.prog .bar i{display:block;height:100%;background:var(--ok);transition:width .3s}
+.plan{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;counter-reset:p}
+.plan li{counter-increment:p;display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.plan li::before{content:counter(p);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;border:2px solid var(--ink);font-family:var(--f-mono);font-weight:600}
+.plan li.done{border-color:var(--ok);background:var(--oksoft)}
+.plan li.done::before{content:"✓";background:var(--ok);border-color:var(--ok);color:var(--panel)}
+.plan li > div{min-width:0}
+.plan b{display:block}
+.plan p{margin:2px 0 6px;color:var(--muted);font-size:.92rem}
+.plan .links{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-block;font-size:.8rem;padding:2px 10px;border-radius:999px;border:1px solid var(--steel);color:var(--steel);background:var(--steel-soft);text-decoration:none}
+.tbtn{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:5px 10px;font-size:.84rem;white-space:nowrap}
+.plan li.done .tbtn{border-color:var(--ok);color:var(--ok)}
+
+/* concepts */
+.cpt h2{font-size:1.15rem;display:flex;gap:10px;align-items:baseline}
+.cpt h2 .n{font-family:var(--f-mono);font-size:.85rem;color:var(--steel)}
+.cpt p{margin:8px 0;max-width:72ch}
+.cpt ul,.cpt ol{margin:8px 0;padding-inline-start:22px}
+.cpt li{margin:3px 0}
+.eq{display:block;font-family:var(--f-math);direction:ltr;text-align:left;background:var(--code);border-left:3px solid var(--steel);border-radius:8px;padding:8px 12px;margin:8px 0;font-size:1.05rem;overflow-x:auto;white-space:pre-wrap}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;align-items:start}
+.two > *{min-width:0}
+.tw{overflow-x:auto}
+table.t{border-collapse:collapse;width:100%;font-size:.92rem}
+.t th,.t td{border:1px solid var(--line);padding:6px 9px;text-align:start;vertical-align:top}
+.t th{background:var(--steel-soft);font-weight:600}
+.t td.m,.t th.m{text-align:left}
+.vt{color:var(--vcol);font-weight:600}.mt{color:var(--mcol);font-weight:600}
+.box{border-radius:10px;padding:10px 14px}
+.box.tip{background:var(--steel-soft)}
+.box.warn{background:var(--warnsoft);border-inline-start:4px solid var(--warn)}
+
+/* example cards */
+.grp{margin-top:22px}
+.grp h2{font-size:1.1rem;margin-bottom:4px}
+.grp > p{margin:0 0 10px;color:var(--muted);font-size:.92rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.card{display:flex;flex-direction:column;gap:4px;text-align:start;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-decoration:none;color:var(--ink);transition:border-color .15s,transform .15s;min-width:0}
+.card:hover{border-color:var(--steel);transform:translateY(-2px)}
+.card .no{font-family:var(--f-mono);font-size:.74rem;color:var(--mcol);direction:ltr;text-align:right}
+.card h3{font-family:var(--f-body);font-size:1rem;font-weight:700}
+.card p{margin:0;font-size:.86rem;color:var(--muted);line-height:1.65}
+.card .row{display:flex;gap:6px;align-items:center;margin-top:4px}
+.lvl{font-size:.72rem;font-weight:700;padding:1px 9px;border-radius:999px}
+.lvl.l1{background:var(--oksoft);color:var(--ok)}.lvl.l2{background:var(--warnsoft);color:var(--warn)}.lvl.l3{background:var(--msoft);color:var(--mcol)}
+.donem{font-size:.78rem;color:var(--ok);font-weight:700}
+.filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:.88rem;color:var(--muted)}
+.filters button{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:4px 12px;font-size:.85rem}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+
+/* example view */
+.exh{display:flex;flex-direction:column;gap:4px;border-bottom:2px solid var(--ink);padding-bottom:10px}
+.exh .no{font-family:var(--f-mono);font-size:.8rem;color:var(--mcol)}
+.exh h2{font-size:clamp(1.2rem,4vw,1.5rem)}
+.exh .src{font-size:.82rem;color:var(--muted)}
+.qtext{direction:ltr;text-align:left;font-family:var(--f-math);font-size:1.08rem;margin:0}
+.given{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px}
+.given li{background:var(--code);border-radius:8px;padding:6px 10px;font-size:.92rem;min-width:0}
+.fig{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px;overflow-x:auto}
+.fig svg{display:block;width:100%;min-width:520px;height:auto}
+.ctl{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--ink);background:var(--panel);border-radius:10px;padding:8px 14px;font-size:.92rem}
+.btn.pri{background:var(--ink);color:var(--panel)}
+.btn:disabled{opacity:.4;cursor:default}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;counter-reset:s}
+.steps li{counter-increment:s;display:grid;grid-template-columns:34px 1fr;gap:12px;animation:in .3s ease}
+.steps li::before{content:counter(s);display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--ink);color:var(--panel);font-family:var(--f-mono);font-weight:600;font-size:.9rem}
+.steps li > div{min-width:0}
+.steps b{display:block}
+.steps .d{color:var(--muted);font-size:.93rem;display:block}
+.steps .q{display:block;margin-top:5px;font-family:var(--f-math);direction:ltr;text-align:left;background:var(--code);border-left:3px solid var(--mcol);border-radius:8px;padding:6px 12px;font-size:1.05rem;white-space:pre-wrap;overflow-x:auto}
+.ans{background:var(--vsoft);border:2px solid var(--vcol);border-radius:10px;padding:12px 16px}
+.ans b{color:var(--vcol);direction:ltr;unicode-bidi:isolate;display:inline-block}
+.idea{background:var(--msoft);border-inline-start:4px solid var(--mcol);border-radius:10px;padding:10px 14px}
+.hidden-sol{border:2px dashed var(--line);border-radius:12px;padding:18px;text-align:center;color:var(--muted)}
+.exnav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.exnav a{max-width:48%;text-decoration:none;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 12px;color:var(--ink);font-size:.9rem}
+@keyframes in{from{opacity:.2;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* calculator */
+.form{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.fld{display:flex;flex-direction:column;gap:2px;font-size:.82rem;color:var(--muted);min-width:0}
+.fld input,.fld select{font-family:var(--f-math);font-size:1rem;padding:6px 9px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;direction:ltr;width:100%}
+.loads{display:flex;flex-direction:column;gap:6px}
+.lrow{display:grid;grid-template-columns:110px repeat(4,minmax(0,1fr)) 38px;gap:6px;align-items:end;background:var(--code);border-radius:10px;padding:8px}
+.lrow .x{width:34px;height:34px;border:1px solid var(--line);background:var(--panel);border-radius:8px;font-size:1.1rem}
+.presets{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.86rem;color:var(--muted)}
+.presets button{border:1px solid var(--steel);background:var(--steel-soft);color:var(--steel);border-radius:999px;padding:3px 11px;font-size:.82rem}
+.res{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}
+.res div{background:var(--code);border-radius:8px;padding:7px 11px;display:flex;justify-content:space-between;gap:8px;font-size:.92rem}
+.res div b{font-family:var(--f-math);direction:ltr;unicode-bidi:isolate}
+.res div.hi{background:var(--msoft);outline:1.5px solid var(--mcol)}
+.res div.hi b{color:var(--mcol)}
+.err{color:var(--rx);font-weight:600}
+@media (max-width:620px){.lrow{grid-template-columns:1fr 1fr}.lrow .x{justify-self:end}}
+
+/* svg */
+.drw text{font-family:var(--f-math);font-size:14px;fill:var(--ink)}
+.drw .beam{fill:var(--ink)}
+.drw .sup{fill:var(--code);stroke:var(--ink);stroke-width:1.5}
+.drw .k{stroke:var(--ink);stroke-width:1.5;fill:none}
+.drw .ld{stroke:var(--steel);stroke-width:1.6;fill:none}
+.drw .ldf{fill:var(--steel-soft);stroke:var(--steel);stroke-width:1.4}
+.drw text.ldt{fill:var(--steel);font-weight:600}
+.drw .rxl{stroke:var(--rx);stroke-width:2;fill:none}
+.drw text.rxt{fill:var(--rx);font-weight:600}
+.drw .dim{stroke:var(--muted);stroke-width:1;fill:none}
+.drw text.dimt{fill:var(--muted);font-size:13px}
+.drw text.lab{font-weight:600;font-size:15px}
+.drw .axis{stroke:var(--ink);stroke-width:1.2}
+.drw .vf{fill:var(--vsoft);stroke:none}.drw .vl{fill:none;stroke:var(--vcol);stroke-width:2.2;stroke-linejoin:round}
+.drw .mf{fill:var(--msoft);stroke:none}.drw .ml{fill:none;stroke:var(--mcol);stroke-width:2.2;stroke-linejoin:round}
+.drw text.vt{fill:var(--vcol);font-weight:600;font-size:13px}.drw text.mt{fill:var(--mcol);font-weight:600;font-size:13px}
+.drw text.ph{font-family:var(--f-body);font-size:13px;fill:var(--muted)}
+.drw .grid{stroke:var(--line);stroke-width:1;stroke-dasharray:3 4}
+.drw .dotv{fill:var(--vcol)}.drw .dotm{fill:var(--mcol)}
+.drw .mk-ld{fill:var(--steel)}.drw .mk-rx{fill:var(--rx)}
+.drw .hinge{fill:var(--panel);stroke:var(--ink);stroke-width:2}
+
+/* formulas, quiz */
+.fcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px}
+.fcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+.fcard h3{font-size:1rem;color:var(--steel);margin-bottom:4px}
+.fcard ul{margin:4px 0;padding-inline-start:18px}
+.fcard.warn{background:var(--warnsoft);border-color:var(--warn)}
+.fcard.warn h3{color:var(--warn)}
+.score{position:sticky;top:calc(env(safe-area-inset-top,0px) + 58px);z-index:5;display:inline-flex;gap:10px;background:var(--ink);color:var(--panel);border-radius:10px;padding:6px 14px;margin-bottom:10px;font-size:.92rem}
+.qc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.qc .qq{margin:0 0 8px;font-weight:600}
+.qc .qq .num{color:var(--mcol);font-size:.8rem;margin-inline-end:6px}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:6px}
+.opts button{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px 10px;text-align:start}
+.opts button.right{background:var(--oksoft);border-color:var(--ok);color:var(--ok);font-weight:700}
+.opts button.wrong{background:var(--msoft);border-color:var(--mcol);color:var(--mcol)}
+.opts button:disabled{cursor:default}
+.why{margin:8px 0 0;font-size:.92rem;color:var(--muted);border-inline-start:3px solid var(--steel);padding-inline-start:10px}
+.foot{margin-top:30px;font-size:.8rem;color:var(--muted);text-align:center}
+@media (prefers-reduced-motion:reduce){.card,.prog .bar i{transition:none}.steps li{animation:none}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>القوى الداخلية · الملف 6</h1>
+      <p>الفصل الرابع من التحليل الإنشائي: V و M و SFD و BMD، شرح وحلول وحاسبة.</p>
+    </div>
+    <div class="tblock" aria-label="بطاقة المقرر"><span>COURSE</span><span>CE 360</span><span>CHAPTER</span><span>4 · Internal Loadings</span><span>REF</span><span>Hibbeler, Ch. 4</span></div>
+  </header>
+  <nav class="tabs" id="tabs"></nav>
+  <main id="app"></main>
+  <p class="foot">مبني من محتوى الملف 6 وأمثلة كتاب Hibbeler واختبارات 1446 و 1447. الوحدات: kN و m.</p>
+</div>
+
+<script>
+/*SOLVER*/
+const EPS=1e-9;
+function fmt(v,n=2){if(!isFinite(v))return'—';let r=Math.round(v*10**n)/10**n;if(Math.abs(r)<1e-9)r=0;return String(r).replace('-','−')}
+// spec: {L, sup:[{x,t:'pin'|'roller'|'fixed',lab}], loads:[{k:'P',x,v}|{k:'M',x,v}|{k:'w',a,b,w1,w2}], R:[{x,F,C,lab}] optional}
+// P: v>0 downward. M: v>0 clockwise. w: >0 downward. F: >0 upward. C: >0 clockwise.
+function solve(spec){
+  const forces=[],couples=[],dists=[],reac=[];
+  for(const l of spec.loads){
+    if(l.k==='P')forces.push({x:l.x,F:-l.v});
+    else if(l.k==='M')couples.push({x:l.x,C:l.v});
+    else if(l.k==='w'&&l.b>l.a)dists.push({a:l.a,b:l.b,w1:l.w1,w2:l.w2});
+  }
+  // resultant force (down) and its moment about point p (ccw +) from all applied loads
+  const tot=p=>{let F=0,Mo=0;
+    forces.forEach(f=>{F+=-f.F;Mo+=f.F*(f.x-p)});
+    couples.forEach(c=>{Mo+=-c.C});
+    dists.forEach(d=>{const len=d.b-d.a,W=(d.w1+d.w2)/2*len;if(!W&&!d.w1&&!d.w2)return;
+      const xc=W?d.a+len*(d.w1+2*d.w2)/(3*(d.w1+d.w2)):d.a;F+=W;Mo+=-W*(xc-p)});
+    return{F,Mo}};
+  if(spec.R){spec.R.forEach(r=>{if(r.F)forces.push({x:r.x,F:r.F});if(r.C)couples.push({x:r.x,C:r.C});reac.push(r)});}
+  else{
+    const fx=spec.sup.filter(s=>s.t==='fixed'),sp=spec.sup.filter(s=>s.t!=='fixed');
+    if(fx.length===1&&sp.length===0){const s=fx[0],t=tot(s.x);
+      // Ry up = total down load; reaction couple ccw Mr balances: Mr + t.Mo = 0
+      const Ry=t.F,Mr=-t.Mo;forces.push({x:s.x,F:Ry});couples.push({x:s.x,C:-Mr});
+      reac.push({x:s.x,F:Ry,C:-Mr,lab:s.lab});
+    }else if(fx.length===0&&sp.length===2){const[a,b]=sp.slice().sort((p,q)=>p.x-q.x);
+      if(Math.abs(b.x-a.x)<EPS)return{err:'الركيزتين في نفس المكان.'};
+      const t=tot(a.x),Rb=-t.Mo/(b.x-a.x),Ra=t.F-Rb;
+      forces.push({x:a.x,F:Ra},{x:b.x,F:Rb});reac.push({x:a.x,F:Ra,lab:a.lab},{x:b.x,F:Rb,lab:b.lab});
+    }else return{err:'الحاسبة تحل كمرة determinate بس: ركيزتين (pin و roller) أو fixed وحدة.'};
+  }
+  const sys={spec,forces,couples,dists,reac};
+  sys.VM=(x,side)=>{const inc=xi=>side<0?xi<x-EPS:xi<=x+EPS;let V=0,M=0;
+    for(const f of forces)if(inc(f.x)){V+=f.F;M+=f.F*(x-f.x)}
+    for(const c of couples)if(inc(c.x))M+=c.C;
+    for(const d of dists)if(d.a<x){const e=Math.min(x,d.b),len=e-d.a,k=(d.w2-d.w1)/(d.b-d.a),d0=x-d.a;
+      V-=d.w1*len+k*len*len/2;M-=d.w1*(d0*len-len*len/2)+k*(d0*len*len/2-len**3/3)}
+    return{V,M}};
+  const L=spec.L,ks=new Set([0,L]);
+  (spec.sup||[]).forEach(s=>ks.add(s.x));(spec.R||[]).forEach(r=>ks.add(r.x));
+  spec.loads.forEach(l=>{if(l.k==='w'){ks.add(l.a);ks.add(l.b)}else ks.add(l.x)});
+  (spec.hinges||[]).forEach(h=>ks.add(h));
+  sys.keys=[...ks].filter(x=>x>=-EPS&&x<=L+EPS).sort((p,q)=>p-q).filter((x,i,a)=>i===0||x-a[i-1]>1e-7);
+  // V = 0 inside intervals (where V is continuous)
+  sys.roots=[];
+  for(let i=0;i<sys.keys.length-1;i++){const a=sys.keys[i],b=sys.keys[i+1],N=200;let x0=a+1e-7,v0=sys.VM(x0,1).V;
+    for(let j=1;j<=N;j++){const x1=a+(b-a)*j/N-(j===N?1e-7:0),v1=sys.VM(x1,-1).V;
+      if(Math.abs(v1)<=1e-9&&j<N&&Math.abs(v0)>1e-9){sys.roots.push(x1);x0=x1;v0=v1;continue}
+      if(Math.abs(v0)<=1e-9)v0=sys.VM(x0-1e-6,1).V;
+      if(Math.abs(v0)>1e-9&&Math.abs(v1)>1e-9&&v0*v1<0&&!sys.roots.some(r=>Math.abs(r-x0)<1e-5)){let lo=x0,hi=x1;for(let t=0;t<60;t++){const m=(lo+hi)/2;if(sys.VM(lo,1).V*sys.VM(m,1).V<=0)hi=m;else lo=m}sys.roots.push((lo+hi)/2)}
+      x0=x1;v0=v1}}
+  // extreme moments
+  let mx={v:-Infinity},mn={v:Infinity};
+  const pts=[];sys.keys.forEach(x=>{pts.push([x,x>0?-1:1]);pts.push([x,x<L?1:-1])});sys.roots.forEach(x=>pts.push([x,1]));
+  pts.forEach(([x,s])=>{const M=sys.VM(x,s).M;if(M>mx.v)mx={v:M,x};if(M<mn.v)mn={v:M,x}});
+  sys.Mmax=mx;sys.Mmin=mn;
+  let vmx=0;sys.keys.forEach(x=>[-1,1].forEach(s=>{const V=sys.VM(x,s).V;if(Math.abs(V)>Math.abs(vmx))vmx=V}));sys.Vabs=vmx;
+  return sys;
+}
+/*END*/
+
+/* ---------- drawing ---------- */
+const svgT=(x,y,s,c='',a='middle')=>`<text x="${(+x).toFixed(1)}" y="${(+y).toFixed(1)}" text-anchor="${a}" class="${c}">${s}</text>`;
+const svgL=(x1,y1,x2,y2,c,ex='')=>`<line x1="${(+x1).toFixed(1)}" y1="${(+y1).toFixed(1)}" x2="${(+x2).toFixed(1)}" y2="${(+y2).toFixed(1)}" class="${c}" ${ex}/>`;
+const AR=(x1,y1,x2,y2,c)=>svgL(x1,y1,x2,y2,c,`marker-end="url(#m-${c==='rxl'?'rx':'ld'})"`);
+const DEFS=`<defs>${[['ld','mk-ld'],['rx','mk-rx']].map(([i,c])=>`<marker id="m-${i}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="${c}"/></marker>`).join('')}</defs>`;
+function arc(cx,cy,r,cw,c){return cw?`<path d="M${cx-r*.7},${cy+r*.7} A${r},${r} 0 1,1 ${cx-r*.7},${cy-r*.7}" class="${c}" marker-end="url(#m-${c==='rxl'?'rx':'ld'})"/>`:`<path d="M${cx+r*.7},${cy+r*.7} A${r},${r} 0 1,0 ${cx+r*.7},${cy-r*.7}" class="${c}" marker-end="url(#m-${c==='rxl'?'rx':'ld'})"/>`}
+
+function drawBeam(sys,opt={}){
+  const spec=sys.spec,L=spec.L,W=780,ml=64,mr=64,pw=W-ml-mr,X=x=>ml+x*pw/L;
+  let s='';const by=118;
+  // distributed loads
+  const ws=spec.loads.filter(l=>l.k==='w');const wmax=Math.max(1e-9,...ws.map(l=>Math.max(Math.abs(l.w1),Math.abs(l.w2))));
+  const wlab=[];
+  ws.forEach(l=>{const top=x=>{const w=l.w1+(l.w2-l.w1)*(x-l.a)/(l.b-l.a);return by-8-44*Math.abs(w)/wmax};
+    s+=`<polygon points="${X(l.a)},${by-8} ${X(l.a)},${top(l.a)} ${X(l.b)},${top(l.b)} ${X(l.b)},${by-8}" class="ldf" opacity=".85"/>`;
+    const n=Math.max(2,Math.round((X(l.b)-X(l.a))/26));
+    for(let i=0;i<=n;i++){const x=l.a+(l.b-l.a)*i/n,yt=top(x);if(by-8-yt>9)s+=AR(X(x),yt,X(x),by-7,'ld')}
+    if(Math.abs(l.w1-l.w2)<1e-9)wlab.push([X((l.a+l.b)/2),top(l.a)-8,`${fmt(l.w1)} kN/m`]);
+    else{if(Math.abs(l.w1)>1e-9)wlab.push([X(l.a)+4,top(l.a)-8,`${fmt(l.w1)} kN/m`,'start']);if(Math.abs(l.w2)>1e-9)wlab.push([X(l.b)-4,top(l.b)-8,`${fmt(l.w2)} kN/m`,'end'])}
+  });
+  // beam
+  s+=`<rect x="${X(0)}" y="${by-5}" width="${pw}" height="10" class="beam" rx="1"/>`;
+  (spec.hinges||[]).forEach(h=>s+=`<circle cx="${X(h)}" cy="${by}" r="6" class="hinge"/>`);
+  // supports
+  (spec.sup||[]).forEach(su=>{const x=X(su.x);
+    if(su.t==='pin')s+=`<polygon points="${x},${by+5} ${x-11},${by+24} ${x+11},${by+24}" class="sup"/>`+svgL(x-16,by+24,x+16,by+24,'k');
+    else if(su.t==='roller')s+=`<polygon points="${x},${by+5} ${x-10},${by+19} ${x+10},${by+19}" class="sup"/><circle cx="${x-6}" cy="${by+23}" r="3.5" class="sup"/><circle cx="${x+6}" cy="${by+23}" r="3.5" class="sup"/>`+svgL(x-16,by+27,x+16,by+27,'k');
+    else{const d=su.x<L/2?-1:1;s+=svgL(x,by-34,x,by+34,'k','stroke-width="3"');for(let i=0;i<7;i++){const y=by-30+i*10;s+=svgL(x,y,x+d*10,y+8,'k')}}
+  });
+  // point loads and couples
+  const placed=[];
+  spec.loads.forEach(l=>{if(l.k==='P'){const x=X(l.x);if(l.v>=0){s+=AR(x,by-76,x,by-7,'ld');placed.push([x+5,by-80,`${fmt(Math.abs(l.v))} kN`,'start'])}else{s+=AR(x,by+64,x,by+7,'ld');s+=svgT(x+5,by+68,`${fmt(-l.v)} kN`,'ldt','start')}}
+    else if(l.k==='M'){const x=X(l.x);s+=arc(x,by,22,l.v>0,'ld');placed.push([x,by-30,`${fmt(Math.abs(l.v))} kN·m`])}});
+  wlab.forEach(w=>placed.push(w));
+  // nudge colliding load labels upward
+  const done=[];placed.forEach(p=>{let y=p[1];for(let k=0;k<4&&done.some(d=>Math.abs(d[0]-p[0])<70&&Math.abs(d[1]-y)<15);k++)y-=16;done.push([p[0],y]);s+=svgT(p[0],y,p[2],'ldt',p[3]||'middle')});
+  // reactions
+  if(opt.react){sys.reac.forEach(r=>{const x=X(r.x);
+    if(Math.abs(r.F)>1e-9){const up=r.F>0;s+=up?AR(x,by+92,x,by+34,'rxl'):AR(x,by+34,x,by+92,'rxl');s+=svgT(x+7,by+92,`${fmt(Math.abs(r.F))}`,'rxt','start')}
+    if(r.C&&Math.abs(r.C)>1e-9){s+=arc(x,by,34,r.C>0,'rxl');s+=svgT(x+(r.x<L/2?40:-40),by-34,`${fmt(Math.abs(r.C))}`,'rxt',r.x<L/2?'start':'end')}})}
+  // labels and dimensions
+  const ry=opt.react?by+112:by+52;
+  (spec.pts||[]).forEach(p=>s+=svgT(X(p.x),ry,p.t,'lab'));
+  const dy=ry+24,dk=sys.keys;
+  s+=svgL(X(0),dy,X(L),dy,'dim');
+  dk.forEach(x=>s+=svgL(X(x),dy-6,X(x),dy+6,'dim'));
+  for(let i=0;i<dk.length-1;i++){const a=dk[i],b=dk[i+1];if(X(b)-X(a)>30)s+=svgT((X(a)+X(b))/2,dy-5,`${fmt(b-a)} m`,'dimt')}
+  let H=dy+20;
+  if(opt.diag){
+    const panel=(kind)=>{const top=H+18,h=150,base=top+h/2,cls=kind==='V'?'v':'m';
+      const f=(x,sd)=>sys.VM(x,sd)[kind];
+      let mxv=0;const samples=[];
+      for(let i=0;i<dk.length-1;i++){const a=dk[i],b=dk[i+1],N=48;for(let j=0;j<=N;j++){const x=a+(b-a)*j/N,sd=j===0?1:j===N?-1:1;const v=f(x,sd);samples.push([x,v]);mxv=Math.max(mxv,Math.abs(v))}}
+      mxv=mxv||1;const Y=v=>base-v/mxv*(h/2-14);
+      let g=svgL(X(0),base,X(L),base,'axis');
+      dk.forEach(x=>g+=svgL(X(x),top,X(x),top+h,'grid'));
+      const pts=samples.map(([x,v])=>`${X(x).toFixed(1)},${Y(v).toFixed(1)}`);
+      g+=`<polygon points="${X(0)},${base} ${pts.join(' ')} ${X(L)},${base}" class="${cls}f"/>`;
+      g+=`<polyline points="${X(0)},${base} ${pts.join(' ')} ${X(L)},${base}" class="${cls}l"/>`;
+      g+=svgT(ml-14,base+5,kind,`${cls}t`,'end');g+=svgT(ml-14,base+20,kind==='V'?'kN':'kN·m','ph','end');
+      // value labels
+      const lab=[];const add=(x,v,anchor)=>{if(Math.abs(v)<1e-6)return;const px=X(x)+(anchor==='end'?-4:anchor==='start'?4:0);let py=v>0?Y(v)-6:Y(v)+16;
+        if(lab.some(q=>Math.abs(q[0]-px)<44&&Math.abs(q[1]-py)<14&&q[2]===fmt(v)))return;
+        for(let k=0;k<3&&lab.some(q=>Math.abs(q[0]-px)<44&&Math.abs(q[1]-py)<14);k++)py+=v>0?-14:14;
+        lab.push([px,py,fmt(v)]);g+=svgT(px,py,fmt(v),`${cls}t`,anchor)};
+      dk.forEach((x,i)=>{const vl=i>0?f(x,-1):null,vr=i<dk.length-1?f(x,1):null;
+        if(vl!=null&&vr!=null&&Math.abs(vl-vr)>1e-6){add(x,vl,'end');add(x,vr,'start')}
+        else{const v=vl!=null?vl:vr;add(x,v,i===0?'start':i===dk.length-1?'end':'middle')}});
+      if(kind==='V')sys.roots.forEach(x=>{g+=`<circle cx="${X(x)}" cy="${base}" r="4" class="dotv"/>`+svgT(X(x),base+(f(x-0.01,1)>0?18:-8),`x=${fmt(x)}`,'vt')});
+      else sys.roots.forEach(x=>{const v=f(x,1);g+=`<circle cx="${X(x)}" cy="${Y(v)}" r="4" class="dotm"/>`;add(x,v,'middle')});
+      H=top+h;return g};
+    s+=panel('V');s+=panel('M');H+=10;
+  }
+  return `<svg class="drw" viewBox="0 0 ${W} ${H}" role="img" aria-label="رسم الكمرة${opt.diag?' مع مخطط القص والعزم':''}" direction="ltr">${DEFS}${s}</svg>`;
+}
+function reacText(sys){return sys.reac.map(r=>{const lab=r.lab||'R';let t='';
+  if(Math.abs(r.F)>1e-9)t+=`<div><span>${lab}<sub>y</sub></span><b>${fmt(Math.abs(r.F))} kN ${r.F>0?'↑':'↓'}</b></div>`;
+  if(r.C&&Math.abs(r.C)>1e-9)t+=`<div><span>M<sub>${lab}</sub></span><b>${fmt(Math.abs(r.C))} kN·m ${r.C>0?'↻':'↺'}</b></div>`;return t}).join('')}
+function keyTable(sys){const L=sys.spec.L;const rows=sys.keys.map(x=>[x,x>0?sys.VM(x,-1):null,x<L?sys.VM(x,1):null,false]);
+  sys.roots.forEach(x=>rows.push([x,sys.VM(x,1),sys.VM(x,1),true]));rows.sort((a,b)=>a[0]-b[0]);
+  const lab=x=>{const p=(sys.spec.pts||[]).find(p=>Math.abs(p.x-x)<1e-6);return p?p.t:''};
+  return `<div class="tw"><table class="t"><thead><tr><th>النقطة</th><th class="m">x (m)</th><th class="m vt">V⁻ (kN)</th><th class="m vt">V⁺ (kN)</th><th class="m mt">M⁻ (kN·m)</th><th class="m mt">M⁺ (kN·m)</th></tr></thead><tbody>${rows.map(([x,l,r,root])=>`<tr><td>${root?'V = 0':lab(x)}</td><td class="m num">${fmt(x,3)}</td><td class="m num">${l?fmt(l.V):'—'}</td><td class="m num">${r?fmt(r.V):'—'}</td><td class="m num">${l?fmt(l.M):'—'}</td><td class="m num">${r?fmt(r.M):'—'}</td></tr>`).join('')}</tbody></table></div><p class="lead" style="font-size:.85rem;margin-top:6px">⁻ قبل النقطة مباشرة، و ⁺ بعدها مباشرة. الفرق بينهم هو القفزة.</p>`}
+
+/* ---------- content ---------- */
+const GROUPS=[
+ {id:'g1',name:'طريقة المقاطع: V و M عند نقطة',desc:'نقطع عند النقطة المطلوبة وناخذ اتزان جزء واحد.'},
+ {id:'g2',name:'V(x) و M(x) كدوال',desc:'نكتب معادلة لكل منطقة يتغير فيها الحمل.'},
+ {id:'g3',name:'رسم SFD و BMD',desc:'العلاقات بين w و V و M، والقفزات عند الأحمال المركزة.'},
+ {id:'g4',name:'كمرات مركبة و Superposition',desc:'Internal hinge، وجمع رسمات بسيطة.'},
+ {id:'g5',name:'الإطارات Frames',desc:'Rigid joints وأعضاء مائلة.'},
+ {id:'g6',name:'أسئلة اختبارات سابقة',desc:'من الاختبار الأول 1446 و 1447 (الأسئلة الخاصة بالفصل الرابع).'}
+];
+const P=(x,v)=>({k:'P',x,v}),MM=(x,v)=>({k:'M',x,v}),WW=(a,b,w1,w2=w1)=>({k:'w',a,b,w1,w2});
+const pin=(x,lab)=>({x,t:'pin',lab}),rol=(x,lab)=>({x,t:'roller',lab}),fix=(x,lab)=>({x,t:'fixed',lab});
+const pts=(...a)=>a.map(([x,t])=>({x,t}));
+const HB=(n,p)=>`كتاب Hibbeler · Example ${n} (ص ${p})`;
+
+const EX=[
+{id:'h41',g:'g1',no:'H 4.1',lvl:2,src:HB('4.1',158),title:'Girder: V و M عند نقطة C',short:'Roof → beams → girder، ثم section عند C.',
+ q:'The roof weighs 1.8 kN/m² and is supported on 8-m simply supported beams spaced 1 m apart, which transmit their loads to the front girder. Determine the internal shear and moment in the girder at C (2.4 m from its end).',
+ given:['Roof = 1.8 kN/m²','Beams: span 8 m، spacing 1 m','Girder 12 m، الأعمدة على بعد 1.2 m من الطرفين','C على بعد 2.4 m من الطرف'],
+ spec:{L:12,sup:[pin(1.2,'A'),rol(10.8,'B')],loads:[P(0,3.6),...[1,2,3,4,5,6,7,8,9,10,11].map(x=>P(x,7.2)),P(12,3.6)],pts:pts([1.2,'A'],[2.4,'C'],[10.8,'B'])},
+ steps:[
+  ['One-way','نسبة الأبعاد أكبر من 2.','L₂/L₁ = 8/1 = 8 > 2   →   كل beam داخلي ياخذ 1.8 kN/m (والطرفي 0.9)'],
+  ['Beam reactions على الـ girder','كل beam simply supported، يعطي نص حمله لكل طرف.','interior: 1.8 × 8/2 = 7.2 kN      edge: 3.6 kN'],
+  ['Column reactions','11 beam داخلي + 2 طرفي، والتحميل متماثل.','R = [2(3.6) + 11(7.2)]/2 = 43.2 kN'],
+  ['Section عند C','ناخذ الجزء اليسار: 3.6 عند 0، و 7.2 عند 1 و 2، و 43.2 عند 1.2.',''],
+  ['ΣFy = 0','','43.2 − 3.6 − 2(7.2) − V_C = 0   →   V_C = 25.2 kN'],
+  ['ΣM_C = 0','','M_C + 7.2(0.4) + 7.2(1.4) + 3.6(2.4) − 43.2(1.2) = 0   →   M_C = 30.2 kN·m']],
+ ans:'<b>V_C = 25.2 kN</b>، <b>M_C = 30.2 kN·m</b>',idea:'Load path: roof → beams → girder → columns. كل reaction يصير حمل على العنصر اللي بعده.'},
+{id:'h42',g:'g1',no:'H 4.2',lvl:2,src:HB('4.2',159),title:'V و M عند C تحت Triangular Load',short:'لا تستخدم المحصلة الكاملة داخل القطع.',
+ q:'Determine the internal shear and moment at a section through point C (2 m from A).',
+ given:['Simply supported 6 m','Triangle: 0 عند A → 45 kN/m عند B','C على بعد 2 m من A'],
+ spec:{L:6,sup:[pin(0,'A'),rol(6,'B')],loads:[WW(0,6,0,45)],pts:pts([0,'A'],[2,'C'],[6,'B'])},
+ steps:[
+  ['Reactions','المحصلة ½(45)(6) = 135 kN على بعد 4 m من A.','A_y = 45 kN      B_y = 90 kN'],
+  ['شدة الحمل عند C','بالتناسب (similar triangles).','w_C = (2/6)(45) = 15 kN/m'],
+  ['محصلة الجزء AC','مثلث صغير، محصلته على بعد 1/3 من C.','½(15)(2) = 15 kN @ 0.667 m من C'],
+  ['ΣFy = 0','','45 − 15 − V_C = 0   →   V_C = 30 kN'],
+  ['ΣM_C = 0','','−45(2) + 15(0.667) + M_C = 0   →   M_C = 80 kN·m'],
+  ['إضافة: M_max','V = 0 عند x = √(45·6/22.5) = 3.46 m.','M_max = 103.9 kN·m']],
+ ans:'<b>V_C = 30 kN</b>، <b>M_C = 80 kN·m</b>',idea:'استبدل الحمل بالمحصلة بعد ما تقطع، مو قبل. المحصلة الكاملة 135 kN تخدم الـ reactions بس.'},
+{id:'h43',g:'g1',no:'H 4.3',lvl:3,src:HB('4.3',160),title:'Floor Panel → Beams → Girder',short:'45 kN على panel، ننقلها خطوة خطوة للـ girder.',
+ q:'The 45 kN force is supported by floor panel DE, simply supported on floor beams that transmit their loads to the simply supported girder AB. Determine the internal shear and moment at C in the girder.',
+ given:['Girder AB = 6 m، floor beams كل 1.5 m','Panel DE بين x = 3 و 4.5','45 kN على بعد 0.5 m من D','C على بعد 3.75 m من A'],
+ spec:{L:6,sup:[pin(0,'A'),rol(6,'B')],loads:[P(3,30),P(4.5,15)],pts:pts([0,'A'],[3,'D'],[3.75,'C'],[4.5,'E'],[6,'B'])},specNote:'الرسم للـ girder بعد ما نقلنا له reactions الـ floor beams.',
+ steps:[
+  ['Panel DE','Simply supported على 1.5 m.','D = 45(1)/1.5 = 30 kN      E = 45(0.5)/1.5 = 15 kN'],
+  ['Floor beams','ينقلون نفس القوى للـ girder.','30 kN @ 3 m      15 kN @ 4.5 m'],
+  ['Girder reactions','','B_y(6) − 30(3) − 15(4.5) = 0 → B_y = 26.25 kN      A_y = 18.75 kN'],
+  ['ΣFy على AC','','18.75 − 30 − V_C = 0   →   V_C = −11.25 kN'],
+  ['ΣM_C على AC','','−18.75(3.75) + 30(0.75) + M_C = 0   →   M_C = 47.8 kN·m']],
+ ans:'<b>V_C = −11.25 kN</b>، <b>M_C = 47.8 kN·m</b>',idea:'الـ girder ما يشوف الـ 45 kN مباشرة، يشوف reactions الـ floor beams بس. والإشارة السالبة معناها V عكس الاتجاه المفروض.'},
+{id:'h44',g:'g2',no:'H 4.4',lvl:2,src:HB('4.4',163),title:'V(x) و M(x): Cantilever + Triangle',short:'نوجد الشدة عند القطع بالتناسب.',
+ q:'Determine the shear and moment in the beam as a function of x.',
+ given:['Cantilever 3 m، fixed at A (يسار)','Triangle: 0 عند A → 10 kN/m عند الطرف الحر'],
+ spec:{L:3,sup:[fix(0,'A')],loads:[WW(0,3,0,10)],pts:pts([0,'A'],[3,'B'])},
+ steps:[
+  ['Reactions','المحصلة 15 kN على بعد 2 m.','A_y = 15 kN ↑      M_A = 15(2) = 30 kN·m ↺'],
+  ['Section عند x','الشدة عند القطع بالتناسب، ومحصلة الجزء على x/3 من القطع.','w = 10x/3      محصلة = ½(10x/3)x'],
+  ['ΣFy = 0','','15 − ½(10x/3)x − V = 0   →   V = 15 − 1.667x²'],
+  ['ΣM_S = 0','','30 − 15x + ½(10x/3)x·(x/3) + M = 0   →   M = −30 + 15x − 0.556x³'],
+  ['Check عند x = 3','الطرف حر فلازم V و M صفر.','V = 15 − 15 = 0 ✓      M = −30 + 45 − 15 = 0 ✓']],
+ ans:'<b>V = 15 − 1.667x²</b> kN، <b>M = −30 + 15x − 0.556x³</b> kN·m',idea:'Check دايماً: dM/dx لازم يطلع V. هنا d(−30 + 15x − 0.556x³)/dx = 15 − 1.667x² ✓'},
+{id:'h45',g:'g2',no:'H 4.5',lvl:2,src:HB('4.5',164),title:'V(x) و M(x) على منطقتين',short:'Discontinuity عند x = 2 يحتاج x₁ و x₂.',
+ q:'Determine the shear and moment in the beam as a function of x.',
+ given:['Cantilever 3 m، fixed at A','50 kN/m على أول 2 m','50 kN ↓ و 50 kN·m (clockwise) عند الطرف'],
+ spec:{L:3,sup:[fix(0,'A')],loads:[WW(0,2,50),P(3,50),MM(3,50)],pts:pts([0,'A'],[2,'B'],[3,'C'])},
+ steps:[
+  ['Reactions','','A_y = 100 + 50 = 150 kN ↑      M_A = 100(1) + 50(3) + 50 = 300 kN·m ↺'],
+  ['منطقتين','الحمل الموزع يوقف عند 2 m.','0 ≤ x₁ < 2      2 < x₂ ≤ 3'],
+  ['V في المنطقة 1','','V = 150 − 50x₁'],
+  ['M في المنطقة 1','','M = 150x₁ − 25x₁² − 300'],
+  ['V في المنطقة 2','الحمل كله (100 kN) صار يسار القطع.','V = 150 − 100 = 50 kN'],
+  ['M في المنطقة 2','','M = 50x₂ − 200'],
+  ['Check عند x = 3','قبل الـ couple M = −50، والـ couple 50 clockwise يرجعه صفر.','V = 50      M = −50 + 50 = 0 ✓']],
+ ans:'0 ≤ x &lt; 2: <b>V = 150 − 50x</b>، <b>M = 150x − 25x² − 300</b><br>2 &lt; x ≤ 3: <b>V = 50</b>، <b>M = 50x − 200</b>',idea:'كل ما يتغير الحمل (يبدأ أو يوقف أو فيه قوة مركزة) تحتاج دالة جديدة.'},
+{id:'h46',g:'g2',no:'H 4.6',lvl:3,src:HB('4.6',165),title:'V(x) و M(x): Trapezoidal Load',short:'مستطيل + مثلث، و M_max عند V = 0.',
+ q:'Determine the shear and moment in the beam as a function of x.',
+ given:['Simply supported 9 m','Trapezoid: 10 kN/m عند A → 30 kN/m عند B'],
+ spec:{L:9,sup:[pin(0,'A'),rol(9,'B')],loads:[WW(0,9,10,30)],pts:pts([0,'A'],[9,'B'])},
+ steps:[
+  ['Reactions','مستطيل 90 kN @ 4.5 m + مثلث 90 kN @ 6 m.','B_y(9) = 90(4.5) + 90(6) → B_y = 105 kN      A_y = 75 kN'],
+  ['Section عند x','مستطيل 10x + مثلث شدته عند القطع 20x/9.','محصلة المثلث = ½(20x/9)x'],
+  ['ΣFy = 0','','V = 75 − 10x − 1.11x²'],
+  ['ΣM_S = 0','','M = 75x − 5x² − 0.370x³'],
+  ['V = 0','نحل المعادلة التربيعية.','1.11x² + 10x − 75 = 0   →   x = 4.87 m'],
+  ['M_max','','M_max = 75(4.87) − 5(4.87)² − 0.370(4.87)³ = 204 kN·m']],
+ ans:'<b>V = 75 − 10x − 1.11x²</b>، <b>M = 75x − 5x² − 0.370x³</b>، و <b>M_max ≈ 204 kN·m</b> عند x = 4.87 m',idea:'أي trapezoid عند القطع = مستطيل كامل + مثلث شدته تتناسب مع x.'},
+{id:'f6',g:'g3',no:'ملف 6 · Ex 4-9',lvl:1,src:'الملف 6، صفحة 10',title:'SFD و BMD: قوة مركزة + عزم مركز',short:'الدرس الأساسي للقفزات: P يقفز الـ SFD، و couple يقفز الـ BMD.',
+ q:'Draw the shear and moment diagrams for the shown beam.',
+ given:['L = 6 m (A–C = 3، C–D = 1.5، D–B = 1.5)','P = 3 kN عند C','M = 6 kN·m (clockwise) عند D','A: pin      B: roller'],
+ spec:{L:6,sup:[pin(0,'A'),rol(6,'B')],loads:[P(3,3),MM(4.5,6)],pts:pts([0,'A'],[3,'C'],[4.5,'D'],[6,'B'])},
+ steps:[
+  ['Reaction B_y (ΣM_A = 0)','عكس عقارب الساعة موجب.','B_y (6) − 3 (3) − 6 = 0   →   B_y = 2.5 kN ↑'],
+  ['Reaction A_y','','A_y = 3 − 2.5 = 0.5 kN ↑'],
+  ['SFD','من A إلى C الـ shear = +0.5. عند C ينزل بمقدار P = 3. الـ couple ما يأثر على الـ shear.','V(A→C) = +0.5 kN      V(C→B) = 0.5 − 3 = −2.5 kN'],
+  ['M_C','من اليسار. Tension bottom = موجب.','M_C = +0.5 × 3 = +1.5 kN·m'],
+  ['M_D قبل الـ couple','','M_D⁻ = 0.5 × 4.5 − 3 × 1.5 = −2.25 kN·m'],
+  ['M_D بعد الـ couple','نضيف 6 kN·m (قفزة لفوق لأنه clockwise).','M_D⁺ = −2.25 + 6 = +3.75 kN·m'],
+  ['Check من اليمين','','M_D⁺ = 2.5 × 1.5 = +3.75 kN·m   ✓'],
+  ['M_A و M_B','Simple supports.','M_A = M_B = 0']],
+ ans:'Shear: <b>V(A→C) = +0.5 kN</b> و <b>V(C→B) = −2.5 kN</b><br>Moment: <b>M_C = +1.5</b>، <b>M_D⁻ = −2.25</b>، <b>M_D⁺ = +3.75 kN·m</b>، و M_A = M_B = 0',idea:'Concentrated load = قفزة في الـ SFD. Concentrated moment = قفزة في الـ BMD بنفس مقداره.'},
+{id:'h47',g:'g3',no:'H 4.7',lvl:1,src:HB('4.7',171),title:'SFD و BMD: Powerline Frame',short:'Point loads بس، فالـ V ثابت والـ M خطوط.',
+ q:'Each horizontal member of the powerline support frame carries the cable loads shown. Draw the shear and moment diagrams.',
+ given:['Member 6 m، أحمال 4 kN عند A و C و E','الأعمدة عند B و D (1.5 m من الطرفين)'],
+ spec:{L:6,sup:[pin(1.5,'B'),rol(4.5,'D')],loads:[P(0,4),P(3,4),P(6,4)],pts:pts([0,'A'],[1.5,'B'],[3,'C'],[4.5,'D'],[6,'E'])},
+ steps:[
+  ['Reactions','متماثل.','B_y = D_y = 12/2 = 6 kN ↑'],
+  ['SFD','نتبع الأحمال من اليسار: −4، ثم +6، ثم −4، ثم +6، ثم −4.','V = −4، 2، −2، 4'],
+  ['BMD','الـ M خطوط مستقيمة لأن V ثابت. نحسب بالمساحات.','M_B = −4(1.5) = −6      M_C = −6 + 2(1.5) = −3      M_D = −6']],
+ ans:'V: <b>−4، 2، −2، 4 kN</b>. M: <b>−6</b> عند B و D، و <b>−3</b> عند C',idea:'تغير الـ M بين نقطتين = مساحة الـ SFD بينهم. أسرع بكثير من الـ sections.'},
+{id:'h48',g:'g3',no:'H 4.8',lvl:2,src:HB('4.8',172),title:'SFD و BMD: Triangular Load',short:'V = 0 عند 5.20 m و M_max = 104.',
+ q:'Draw the shear and moment diagrams for the beam.',
+ given:['Simply supported 9 m','Triangle: 0 عند A → 20 kN/m عند B'],
+ spec:{L:9,sup:[pin(0,'A'),rol(9,'B')],loads:[WW(0,9,0,20)],pts:pts([0,'A'],[9,'B'])},
+ steps:[
+  ['Reactions','المحصلة 90 kN عند 6 m.','A_y = 30 kN      B_y = 60 kN'],
+  ['SFD','يبدأ بميل صفر (w = 0) وينتهي بميل −20. منحنى درجة ثانية.','V(0) = 30      V(9) = −60'],
+  ['V = 0','','30 − ½(20x/9)x = 0   →   x = 5.20 m'],
+  ['M_max','عند V = 0.','M = 30(5.20) − ½(20·5.20/9)(5.20)(5.20/3) = 104 kN·m']],
+ ans:'<b>A_y = 30</b>، <b>B_y = 60 kN</b>، و <b>M_max = 104 kN·m</b> عند x = 5.20 m',idea:'ميل الـ SFD = شدة الحمل عند النقطة، فالـ V ينزل ببطء في البداية وبسرعة في الآخر.'},
+{id:'h49a',g:'g3',no:'H 4.9a',lvl:2,src:HB('4.9a',173),title:'SFD و BMD: Cantilever + Couple',short:'Couple عند الطرف الحر وحمل متغير.',
+ q:'Draw the shear and moment diagrams for the cantilever (fixed at the right). The support reactions are 30 kN and 42 kN·m.',
+ given:['L = 4.5 m، fixed at B (يمين)','15 kN·m (clockwise) عند الطرف الحر A','الحمل: 0 → 8 kN/m على أول 1.5 m، ثم 8 kN/m على 3 m'],
+ spec:{L:4.5,sup:[fix(4.5,'B')],loads:[MM(0,15),WW(0,1.5,0,8),WW(1.5,4.5,8)],pts:pts([0,'A'],[4.5,'B'])},
+ steps:[
+  ['Reactions','','B_y = 6 + 24 = 30 kN ↑      M_B = 42 kN·m'],
+  ['SFD','V يبدأ صفر (ما فيه قوة عند A)، منحنى أول 1.5 m ثم خط بميل −8.','V(1.5) = −6      V(4.5) = −30'],
+  ['BMD','يبدأ +15 بسبب الـ couple، وينزل.','M(0) = 15      M(1.5) = 15 − 3 = 12      M(4.5) = −42']],
+ ans:'V: <b>0 → −6 → −30 kN</b>. M: <b>15 → 12 → −42 kN·m</b>',idea:'Clockwise couple يرفع الـ BMD (قفزة لفوق)، و counterclockwise ينزله.'},
+{id:'h49b',g:'g3',no:'H 4.9b',lvl:1,src:HB('4.9b',173),title:'SFD و BMD: Symmetric Triangle',short:'مثلث قمته في النص، M_max = 18.',
+ q:'Draw the shear and moment diagrams. The support reactions are 9 kN each.',
+ given:['Simply supported 6 m','Triangle: peak 6 kN/m في المنتصف'],
+ spec:{L:6,sup:[pin(0,'A'),rol(6,'B')],loads:[WW(0,3,0,6),WW(3,6,6,0)],pts:pts([0,'A'],[3,'C'],[6,'B'])},
+ steps:[
+  ['Reactions','المحصلة ½(6)(6) = 18 kN، متماثل.','A_y = B_y = 9 kN'],
+  ['SFD','منحنى من 9 إلى −9، وصفر في النص.','V(3) = 9 − ½(6)(3) = 0'],
+  ['BMD','M_max عند V = 0.','M_max = 9(3) − 9(1) = 18 kN·m']],
+ ans:'V من <b>9</b> إلى <b>−9 kN</b>، و <b>M_max = 18 kN·m</b> في النص',idea:'في الأحمال المتماثلة، V = 0 و M_max دايماً في النص.'},
+{id:'h49c',g:'g3',no:'H 4.9c',lvl:3,src:HB('4.9c',173),title:'SFD و BMD: Overhang + Reaction سالب',short:'Reaction عند C طلع لتحت (−5 kN).',
+ q:'Draw the shear and moment diagrams. The support reactions are 85 kN at B and 5 kN at C.',
+ given:['A حر، B support على 2 m، C على 4 m','20 kN ↓ و 30 kN·m (counterclockwise) عند A','30 kN/m على BC'],
+ spec:{L:4,sup:[pin(2,'B'),rol(4,'C')],loads:[P(0,20),MM(0,-30),WW(2,4,30)],pts:pts([0,'A'],[2,'B'],[4,'C'])},
+ steps:[
+  ['Reactions','ΣM_C و ΣFy.','B_y = 85 kN ↑      C_y = 5 kN ↓'],
+  ['SFD','−20 ثابت لين B، يقفز +85 إلى 65، وينزل بميل −30 لين 5.','V: −20 → 65 → 5'],
+  ['BMD','يبدأ −30 بالـ couple، ينزل لين B، ثم يرجع صفر عند C.','M(0) = −30      M_B = −30 − 20(2) = −70      M_C = −70 + ½(65 + 5)(2) = 0']],
+ ans:'V: <b>−20، 65 → 5 kN</b>. M: <b>−30 → −70 → 0 kN·m</b>',idea:'لو طلع الـ reaction سالب يعني اتجاهه عكس اللي فرضته. هنا C تسحب الكمرة لتحت.'},
+{id:'h410',g:'g3',no:'H 4.10',lvl:2,src:HB('4.10',174),title:'SFD و BMD: Overhang Beam',short:'M_min = −2.81 عند B و M_max صغير 0.239.',
+ q:'The beam supports a portion of an entrance overhang. B is a roller and C is pinned. Draw the shear and moment diagrams.',
+ given:['A حر، B على 0.75 m، C على 1.75 m','10 kN/m على الطول كله'],
+ spec:{L:1.75,sup:[rol(0.75,'B'),pin(1.75,'C')],loads:[WW(0,1.75,10)],pts:pts([0,'A'],[0.75,'B'],[1.75,'C'])},
+ steps:[
+  ['Reactions','ΣM_C: B_y(1) = 17.5(0.875).','B_y = 15.31 kN ↑      C_y = 2.19 kN ↑'],
+  ['SFD','V_B⁻ = −10(0.75) = −7.50، يقفز +15.31 إلى 7.81، وينزل لين −2.19.','V = 0 عند 7.81/x = 2.19/(1 − x) → x = 0.781 m بعد B'],
+  ['BMD','بالمساحات.','M_B = ½(−7.50)(0.75) = −2.81      M_max = −2.81 + ½(7.81)(0.781) = 0.239 kN·m']],
+ ans:'<b>B_y = 15.31</b>، <b>C_y = 2.19 kN</b>. M: <b>−2.81</b> عند B و <b>0.239 kN·m</b> عند x = 1.531 m',idea:'الـ overhang يعطي moment سالب فوق الـ support (hogging)، وغالباً هو أكبر قيمة عددياً.'},
+{id:'h411',g:'g4',no:'H 4.11',lvl:3,src:HB('4.11',175),title:'SFD و BMD: Compound Beam',short:'Hinge عند B، مثلث على CE، و couple 150 عند A.',
+ q:'Draw the shear and moment diagrams for the compound beam. A and C are rollers, B and E are pins.',
+ given:['A (0)، B hinge (5)، C (8)، D (11)، E (14) m','150 kN·m (clockwise) عند A','20 kN/m على AB، و 30 kN عند x = 6','Triangle على CE: peak 30 kN/m عند D'],
+ spec:{L:14,sup:[rol(0,'A'),rol(8,'C'),pin(14,'E')],hinges:[5],R:[{x:0,F:20,lab:'A'},{x:8,F:205,lab:'C'},{x:14,F:-5,lab:'E'}],loads:[MM(0,150),WW(0,5,20),P(6,30),WW(8,11,0,30),WW(11,14,30,0)],pts:pts([0,'A'],[5,'B'],[8,'C'],[11,'D'],[14,'E'])},specNote:'الـ reactions مأخوذة من الحل (كمرة مركبة)، والرسم محسوب منها.',
+ steps:[
+  ['Segment AB: M_B = 0','نفك عند الـ hinge.','A_y(5) + 150 − 100(2.5) = 0   →   A_y = 20 kN      B = 80 kN'],
+  ['Segment BE','الـ 80 kN تنتقل لـ BE لتحت عند B.','ΣM_C: 80(3) + 30(2) − 90(3) + 6E_y = 0 → E_y = −5 kN      C_y = 205 kN'],
+  ['SFD','20 → −80 عند B، قفزة −30 → −110، ثم +205 → 95، وينزل لين 5.','V = 0 عند x = 1 m'],
+  ['BMD','يبدأ 150 بالـ couple.','M_max = 160 عند x = 1      M_B = 0      M_C = −300      M_D = −60      M_E = 0']],
+ ans:'<b>A_y = 20</b>، <b>C_y = 205</b>، <b>E_y = −5 kN</b>. M: <b>160</b> عند x = 1 m و <b>−300 kN·m</b> عند C',idea:'الـ M عند الـ hinge صفر دايماً، وهذا أفضل check على رسمتك.'},
+{id:'h415',g:'g4',no:'H 4.15',lvl:3,src:HB('4.15',186),title:'BMD بطريقة Superposition',short:'Cantilever من B: ثلاث رسمات نجمعها.',
+ q:'Draw the moment diagram for the beam using the method of superposition. Consider the beam cantilevered from the support at B.',
+ given:['Overhang 1.5 m، A على 1.5 m، B على 6 m','90 kN·m (counterclockwise) عند الطرف الحر','Triangle: 0 عند A → 50 kN/m عند B','Reactions: A = 57.5، B = 55 kN'],
+ spec:{L:6,sup:[rol(1.5,'A'),pin(6,'B')],loads:[MM(0,-90),WW(1.5,6,0,50)],pts:pts([0,'O'],[1.5,'A'],[6,'B'])},
+ steps:[
+  ['الفكرة','نعتبر الكمرة cantilever من B، ونحط عليها نفس الأحمال + A_y كحمل.',''],
+  ['الجزء 1: الـ couple','ثابت على الطول كله.','M₁ = −90'],
+  ['الجزء 2: A_y = 57.5 ↑','يبدأ من A.','M₂ = 57.5(x − 1.5)   →   258.75 عند B'],
+  ['الجزء 3: المثلث','Cubic.','M₃ = −(50/4.5)(x − 1.5)³/6   →   −168.75 عند B'],
+  ['الجمع','','M_B = −90 + 258.75 − 168.75 = 0 ✓      M_max = 33.3 kN·m عند x = 4.72 m']],
+ ans:'<b>−90</b> على الـ overhang، و <b>M_max = 33.3 kN·m</b> عند x = 4.72 m، وصفر عند B',idea:'الـ superposition تعطيك أشكال بسيطة (ثابت، خطي، cubic) سهل تحسب مساحاتها، وهذا يفيدك لاحقاً في الـ deflection.'},
+{id:'h412',g:'g5',no:'H 4.12',lvl:3,src:HB('4.12',177),title:'Moment Diagram: L-Frame',short:'Column + beam، نقطع عند الـ joint C.',
+ q:'Draw the moment diagram for the frame. A is a roller and B is a pin.',
+ given:['Column AC: 3.3 m (15 kN أفقي على ارتفاع 1.8 m)','Beam CB: 4.5 m','25 kN ↓ عند C','A roller (رأسي)، B pin'],
+ spec:{L:4.5,R:[{x:0,F:5,C:-22.5,lab:'C'},{x:4.5,F:-5,lab:'B'}],loads:[],pts:pts([0,'C'],[4.5,'B'])},specNote:'الرسم للعضو CB لحاله، مع القوى الداخلية عند C (V = 5 kN و M = −22.5 kN·m).',
+ steps:[
+  ['Entire frame: ΣFx','','B_x = 15 kN ←'],
+  ['Entire frame: ΣM_B','','−A_y(4.5) + 25(4.5) + 15(1.5) = 0   →   A_y = 30 kN ↑'],
+  ['ΣFy','','30 − 25 + B_y = 0   →   B_y = 5 kN ↓'],
+  ['Member AC','تحت الـ 15 kN ما فيه shear، فوقها M يزيد خطياً.','M = 0 من A لين 1.8 m      M_C = −15(1.5) = −22.5 kN·m'],
+  ['Member CB','نفس الـ moment ينتقل عبر الـ rigid joint C، ويرجع صفر عند الـ pin B.','M: −22.5 → 0 خطي (V = 5 kN)']],
+ ans:'<b>A_y = 30 ↑</b>، <b>B_x = 15 ←</b>، <b>B_y = 5 ↓</b> (kN)، و <b>M_C = −22.5 kN·m</b> في العضوين',idea:'عند الـ rigid joint الـ moment نفسه يكمل من عضو لعضو. Check: الـ joint C لازم يكون في equilibrium.'},
+{id:'h413',g:'g5',no:'H 4.13',lvl:3,src:HB('4.13',178),title:'SFD و BMD: Inclined Frame + Wind',short:'حمل أفقي على عضو مائل: نحلله ⊥ و ∥ للعضو.',
+ q:'Draw the shear and moment diagrams for the frame. A is a pin, C is a roller, and B is a rigid joint.',
+ given:['AB مائل: 4 m أفقي، 3 m رأسي (5 m)','BC أفقي 4 m، و 80 kN في نصه','Wind 40 kN/m أفقي على ارتفاع AB'],
+ spec:{L:4,R:[{x:0,F:-2.5,C:170,lab:'B'},{x:4,F:82.5,lab:'C'}],loads:[P(2,80)],pts:pts([0,'B'],[2,''],[4,'C'])},specNote:'الرسم للعضو BC لحاله، مع القوى الداخلية عند B (V = −2.5 kN و M = 170 kN·m).',
+ steps:[
+  ['المحصلة','40 kN/m على 3 m ارتفاع.','120 kN → @ 1.5 m'],
+  ['ΣM_A = 0','','C_y(8) − 120(1.5) − 80(6) = 0   →   C_y = 82.5 kN ↑'],
+  ['ΣFx و ΣFy','','A_x = 120 kN ←      A_y = 80 − 82.5 = −2.5 → 2.5 kN ↓'],
+  ['Member BC','','V = −2.5 ثم −82.5      M_B = 82.5(4) − 80(2) = 170 → 165 → 0'],
+  ['حمل AB على طوله','120 kN على 5 m = 24 kN/m، نحلله ⊥ و ∥.','⊥: 24(0.6) = 14.4 kN/m      ∥: 24(0.8) = 19.2 kN/m'],
+  ['Member AB','الـ shear عند A = مركبة الـ reactions العمودية على العضو.','V_A = 120(0.6) − 2.5(0.8) = 70      V = 70 − 14.4s → 0 عند s = 4.86 m'],
+  ['M على AB','','M = 70s − 7.2s²      M_max = 170.1      M_B = 170 kN·m ✓']],
+ ans:'<b>A_x = 120 ←</b>، <b>A_y = 2.5 ↓</b>، <b>C_y = 82.5 ↑</b> (kN). M_B = <b>170 kN·m</b>، و M_max على AB = <b>170.1 kN·m</b>',idea:'على العضو المائل لازم تحلل كل القوى لمركبات عمودية وموازية لمحوره قبل ما ترسم V و M.'},
+{id:'x1',g:'g6',no:'1447 · Q1 (1)',lvl:1,src:'الاختبار الأول، الفصل الثاني 1447هـ',title:'Beam: UDL + نقطتين، Simply supported',short:'Reactions، SFD و BMD بالـ sections، و M الموجب الأكبر.',
+ q:'For the beam shown: (a) find the reactions, (b) draw the S.F.D and B.M.D using the method of sections, (c) find the maximum positive moment.',
+ given:['L = 9 m، pin عند A و roller عند D','20 kN/m على الطول كله','40 kN عند B (3 m) و C (6 m)'],
+ spec:{L:9,sup:[pin(0,'A'),rol(9,'D')],loads:[WW(0,9,20),P(3,40),P(6,40)],pts:pts([0,'A'],[3,'B'],[6,'C'],[9,'D'])},
+ steps:[
+  ['ΣM_A = 0 (↺ +)','العزوم حول A تلغي A_x و A_y.','−20(9)(4.5) − 40(3) − 40(6) + D_y(9) = 0   →   D_y = 130 kN ↑'],
+  ['ΣF_y = 0','الحالة متماثلة، فكان نقدر نقسم (180 + 80)/2.','A_y = 180 + 80 − 130 = 130 kN ↑      A_x = 0'],
+  ['Section 1: 0 ≤ x < 3','','V = 130 − 20x      M = 130x − 10x²      (x = 3: V = 70، M = 300)'],
+  ['Section 2: 3 < x < 6','الـ V ينزل 40 عند B.','V = 90 − 20x      M = 130x − 10x² − 40(x − 3)      (x = 6: V = −30، M = 300)'],
+  ['Section 3: 6 < x ≤ 9','','V = 50 − 20x      M = 130x − 10x² − 40(x − 3) − 40(x − 6)      (x = 9: M = 0 ✓)'],
+  ['M الموجب الأكبر','V = 0 في Section 2.','90 − 20x = 0 → x = 4.5 m      M = 585 − 202.5 − 60 = 322.5 kN·m']],
+ ans:'<b>A_y = D_y = 130 kN ↑</b>، و <b>M_max = 322.5 kN·m</b> عند x = 4.5 m',idea:'Check بالمساحات: مساحة الـ SFD من A لين النص = ½(130 + 70)(3) + ½(30)(1.5) = 322.5 ✓'},
+{id:'x2',g:'g6',no:'1447 · Q1 (2)',lvl:1,src:'الاختبار الأول، الفصل الثاني 1447هـ',title:'Cantilever: UDL + نقطتين',short:'Fixed support، والـ sections من الطرف الحر بدون reactions.',
+ q:'Same loads on a cantilever fixed at A: find the reactions and draw the S.F.D and B.M.D.',
+ given:['L = 6 m، fixed عند A','20 kN/m على الطول كله','40 kN عند B (3 m) و C (6 m)'],
+ spec:{L:6,sup:[fix(0,'A')],loads:[WW(0,6,20),P(3,40),P(6,40)],pts:pts([0,'A'],[3,'B'],[6,'C'])},
+ steps:[
+  ['Reactions','الـ fixed support فيه 3 مجاهيل.','A_y = 20(6) + 40 + 40 = 200 kN ↑      M_A = 20(6)(3) + 40(3) + 40(6) = 720 kN·m ↺'],
+  ['نقطع من الطرف الحر','ناخذ الجزء اليمين من C، ما فيه reactions. x من C لليسار.',''],
+  ['Section 1: 0 ≤ x < 3 (من C)','','V = 40 + 20x      M = −40x − 10x²      (x = 3: V = 100، M = −210)'],
+  ['Section 2: 3 < x ≤ 6','','V = 80 + 20x      M = −40x − 40(x − 3) − 10x²      (x = 6: V = 200، M = −720 ✓)'],
+  ['M الأكبر','الـ V ما يصير صفر، والـ M كله سالب.','|M|max = 720 kN·m عند A']],
+ ans:'<b>A_y = 200 kN ↑</b>، <b>M_A = 720 kN·m ↺</b>، والـ BMD كله سالب وأكبر قيمة <b>−720</b> عند A',idea:'في الـ cantilever ابدأ من الطرف الحر، تختصر حساب الـ reactions في الـ sections.'},
+{id:'x3',g:'g6',no:'1447 · Q1 (3)',lvl:2,src:'الاختبار الأول، الفصل الثاني 1447هـ',title:'Overhang Beam: UDL + 30 kN بالطرف',short:'Reaction عند B أكبر من الحمل، و M سالب فوق الـ support.',
+ q:'For the overhanging beam: find the reactions, draw the S.F.D and B.M.D, and find the maximum positive moment.',
+ given:['A pin (0)، B roller (5 m)، الطرف C عند 7 m','20 kN/m على الطول كله','30 kN عند C'],
+ spec:{L:7,sup:[pin(0,'A'),rol(5,'B')],loads:[WW(0,7,20),P(7,30)],pts:pts([0,'A'],[5,'B'],[7,'C'])},
+ steps:[
+  ['ΣM_A = 0','','−20(7)(3.5) − 30(7) + B_y(5) = 0   →   B_y = 140 kN ↑'],
+  ['ΣF_y = 0','','A_y = 140 + 30 − 140 = 30 kN ↑'],
+  ['Section AB (من A)','','V = 30 − 20x      M = 30x − 10x²      (x = 5: V = −70، M = −100)'],
+  ['Section BC (من C)','','V = 30 + 20x      M = −30x − 10x²      (x = 2: V = 70، M = −100 ✓)'],
+  ['M الموجب الأكبر','','30 − 20x = 0 → x = 1.5 m      M = 45 − 22.5 = 22.5 kN·m'],
+  ['Inflection point','الـ M يرجع صفر.','30x − 10x² = 0 → x = 3 m']],
+ ans:'<b>A_y = 30</b>، <b>B_y = 140 kN ↑</b>. <b>M_max = 22.5 kN·m</b> عند x = 1.5 m، و <b>M_B = −100 kN·m</b>',idea:'عند B الـ V يقفز من −70 إلى +70 (بمقدار الـ reaction 140)، والـ M من الجهتين نفس القيمة.'},
+{id:'x4',g:'g6',no:'1447 · Q4 (ف1)',lvl:3,src:'الاختبار الأول، الفصل الأول 1447هـ',title:'Frame مائل: 45 kN و 30 kN/m و 60 kN',short:'Reactions، تحليل القوى على العضو المائل، و N و V و M.',
+ q:'For the frame shown (A roller, C pin, B rigid joint): find the reactions and draw the N, V and M diagrams.',
+ given:['AB مائل: 3 m أفقي، 4 m رأسي (5 m)','45 kN أفقي → عند D، منتصف AB (ارتفاع 2 m)','BC أفقي 6 m عليه 30 kN/m','60 kN عند E، منتصف BC'],
+ spec:{L:6,R:[{x:0,F:90,C:180,lab:'B'},{x:6,F:150,lab:'C'}],loads:[WW(0,6,30),P(3,60)],pts:pts([0,'B'],[3,'E'],[6,'C'])},specNote:'الرسم للعضو BC لحاله، مع V = 90 kN و M = 180 kN·m عند B.',
+ steps:[
+  ['ΣF_x = 0','A roller رأسي، فالقوة الأفقية كلها عند C.','C_x = 45 kN ←'],
+  ['ΣM_C = 0 (↺ +)','ذراع الـ 45 حول C = 4 − 2 = 2 m.','−A_y(9) + 45(2) + 30(6)(3) + 60(3) = 0   →   A_y = 90 kN ↑'],
+  ['ΣF_y = 0','','90 + C_y − 180 − 60 = 0   →   C_y = 150 kN ↑'],
+  ['العضو AB عند A','cosθ = 0.6 و sinθ = 0.8.','N_A = −90(0.8) = −72 (compression)      V_A = 90(0.6) = 54'],
+  ['بعد D','نضيف مركبات الـ 45.','N = −(72 + 45(0.6)) = −99      V = 54 − 45(0.8) = 18'],
+  ['العزوم على AB','','M_D = 90(1.5) = 135      M_B = 90(3) − 45(2) = 180 kN·m'],
+  ['العضو BC','N = −45 على طوله. الـ joint B ينقل 180.','V_B = 90 → V_E⁻ = 0 → V_E⁺ = −60 → V_C = −150'],
+  ['M على BC','','M_E = 180 + ½(90)(3) = 315 kN·m (max)      M_C = 315 − ½(60 + 150)(3) = 0 ✓']],
+ ans:'<b>A_y = 90 ↑</b>، <b>C_x = 45 ←</b>، <b>C_y = 150 ↑</b> (kN). <b>M_B = 180</b> و <b>M_max = 315 kN·m</b> عند E',idea:'أكبر moment عند E لأن الـ V صار صفر بالضبط تحت الـ 60 kN.'},
+{id:'x5',g:'g6',no:'1446 · P4',lvl:3,src:'الاختبار الأول، الفصل الثاني 1446هـ',title:'Frame مائل: 30 kN و 20 kN/m و 40 kN',short:'نفس شكل سؤال 1447 بأرقام مختلفة، تدرب عليه بنفسك.',
+ q:'Same frame geometry with: 30 kN horizontal at D, 20 kN/m on BC, and 40 kN at E. Find the reactions and draw the N, V and M diagrams.',
+ given:['AB مائل: 3 m أفقي، 4 m رأسي','30 kN أفقي → عند D (ارتفاع 2 m)','20 kN/m على BC (6 m)','40 kN عند E'],
+ spec:{L:6,R:[{x:0,F:60,C:120,lab:'B'},{x:6,F:100,lab:'C'}],loads:[WW(0,6,20),P(3,40)],pts:pts([0,'B'],[3,'E'],[6,'C'])},specNote:'الرسم للعضو BC لحاله، مع V = 60 kN و M = 120 kN·m عند B.',
+ steps:[
+  ['ΣF_x = 0','','C_x = 30 kN ←'],
+  ['ΣM_C = 0','','−A_y(9) + 30(2) + 20(6)(3) + 40(3) = 0   →   A_y = 60 kN ↑'],
+  ['ΣF_y = 0','','60 + C_y − 120 − 40 = 0   →   C_y = 100 kN ↑'],
+  ['العضو AB','','N_A = −60(0.8) = −48      V_A = 60(0.6) = 36'],
+  ['بعد D','','N = −(48 + 30(0.6)) = −66      V = 36 − 30(0.8) = 12'],
+  ['العزوم','','M_D = 60(1.5) = 90      M_B = 60(3) − 30(2) = 120 kN·m'],
+  ['العضو BC','','M_E = 120 + ½(60)(3) = 210 kN·m      M_C = 210 − ½(40 + 100)(3) = 0 ✓']],
+ ans:'<b>A_y = 60 ↑</b>، <b>C_x = 30 ←</b>، <b>C_y = 100 ↑</b> (kN). <b>M_B = 120</b> و <b>M_max = 210 kN·m</b> عند E',idea:'نفس الخطوات بالضبط. لو حليت سؤال 1447 تقدر تحل هذا في 10 دقائق.'}
+];
+EX.forEach(e=>{e.sys=e.spec?solve(e.spec):null});
+const LVL={1:'سهل',2:'متوسط',3:'صعب'};
+
+const PLAN=[
+ ['c-intro','افهم القوى الداخلية الثلاث','N و V و M، ومتى تظهر.',[['#learn-1','الشرح 1']],15],
+ ['c-sign','احفظ اصطلاح الإشارات','أهم شي في الفصل. أغلب أخطاء الاختبار من هنا.',[['#learn-2','الشرح 2']],15],
+ ['c-sec','طريقة المقاطع عند نقطة','حل الأمثلة 4.1 و 4.2 و 4.3 بنفسك قبل ما تشوف الحل.',[['#ex-h41','4.1'],['#ex-h42','4.2'],['#ex-h43','4.3']],50],
+ ['c-fun','V(x) و M(x) كدوال','متى تحتاج منطقة جديدة، وكيف تتأكد بالاشتقاق.',[['#learn-4','الشرح 4'],['#ex-h44','4.4'],['#ex-h45','4.5'],['#ex-h46','4.6']],60],
+ ['c-gr','الطريقة الرسومية للـ SFD و BMD','العلاقات dV/dx و dM/dx والقفزات. ابدأ بمثال الملف.',[['#learn-5','الشرح 5'],['#ex-f6','Ex 4-9'],['#ex-h47','4.7'],['#ex-h48','4.8']],60],
+ ['c-gr2','Cantilever و Overhang','القفزات من الـ couples، و reactions سالبة، و hogging.',[['#ex-h49a','4.9a'],['#ex-h49b','4.9b'],['#ex-h49c','4.9c'],['#ex-h410','4.10']],60],
+ ['c-cmp','الكمرات المركبة و Superposition','M = 0 عند الـ hinge.',[['#ex-h411','4.11'],['#ex-h415','4.15']],45],
+ ['c-frm','الإطارات Frames','الـ rigid joint والعضو المائل.',[['#learn-8','الشرح 8'],['#ex-h412','4.12'],['#ex-h413','4.13']],50],
+ ['c-exam','حل أسئلة الاختبارات السابقة','وقّت نفسك: 20 دقيقة لكل سؤال.',[['#ex-x1','Q1 (1)'],['#ex-x2','Q1 (2)'],['#ex-x3','Q1 (3)'],['#ex-x4','Frame 1447'],['#ex-x5','Frame 1446']],100],
+ ['c-quiz','اختبر نفسك وراجع القوانين','لازم تجيب 15 من 18 على الأقل.',[['#quiz','الاختبار'],['#formulas','القوانين']],25]
+];
+
+const QUIZ=[
+ ['Concentrated moment يسبب قفزة في:',['SFD','BMD','الاثنين','ولا واحد'],1,'الـ couple ما يغيّر الـ shear، يقفز الـ M بمقداره.'],
+ ['Concentrated force P لتحت يسبب:',['قفزة لتحت بمقدار P في الـ SFD وكسرة في الـ BMD','قفزة في الـ BMD','ما يأثر على الـ SFD','قفزة لفوق في الـ SFD'],0,'الـ SFD ينزل P، والـ BMD يتغير ميله فيصير فيه كسرة (kink).'],
+ ['M_max في كمرة تحت حمل موزع يكون عند:',['أي support','V = 0','أقصى shear','نهاية الكمرة'],1,'dM/dx = V، فأقصى M لما V = 0.'],
+ ['Simply supported، UDL w على L. M_max =',['wL²/2','wL²/8','wL/2','wL²/4'],1,'في المنتصف: (wL/2)(L/2) − (wL/2)(L/4) = wL²/8.'],
+ ['Simply supported و P في المنتصف. M_max =',['PL/2','PL/4','PL/8','PL'],1,'R = P/2، و M = (P/2)(L/2).'],
+ ['Cantilever طوله 2 m وعليه P = 10 kN بالطرف. M عند الـ fixed support:',['−20 kN·m','+20 kN·m','−10 kN·m','0'],0,'P × L، والشد فوق فالإشارة سالبة.'],
+ ['تحت حمل uniform، شكل الـ SFD و BMD:',['ثابت و خطي','خطي و parabola (درجة 2)','درجة 2 و درجة 3','خطي و خطي'],1,'كل تكامل يرفع الدرجة واحد: w ثابت → V خطي → M درجة 2.'],
+ ['تحت حمل مثلثي، شكل الـ SFD و BMD:',['خطي و درجة 2','درجة 2 و درجة 3','ثابت و خطي','درجة 3 و درجة 4'],1,'w خطي → V درجة 2 → M درجة 3.'],
+ ['ΔM بين نقطتين يساوي:',['مساحة الحمل بينهم','مساحة الـ SFD بينهم','ميل الـ SFD','V عند النقطة الأولى'],1,'من dM/dx = V نكامل: ΔM = ∫V dx.'],
+ ['ميل الـ SFD عند نقطة يساوي:',['قيمة M','شدة الحمل الموزع عند النقطة','صفر دايماً','قيمة V'],1,'dV/dx = w(x)، وإشارته سالبة لو الحمل لتحت.'],
+ ['عند internal hinge:',['V = 0','M = 0','V و M صفر','N = 0'],1,'الـ hinge ما يقاوم عزم.'],
+ ['في كمرة overhang، العزم فوق الـ support غالباً:',['موجب','سالب (hogging)','صفر','أكبر من M في النص دايماً'],1,'الجزء البارز يسحب الكمرة لتحت فوق الـ support، فالشد يصير فوق.'],
+ ['العزم الموجب حسب اصطلاح الكتاب:',['شد في الأعلى','شد في الأسفل (الكمرة تتقعر لفوق)','عكس عقارب الساعة','مع عقارب الساعة'],1,'Tension bottom = positive، والشكل مثل الابتسامة.'],
+ ['في الجزء اليسار من القطع، الاتجاهات الموجبة هي:',['V لفوق و M مع عقارب الساعة','V لتحت و M عكس عقارب الساعة','V لتحت و M مع عقارب الساعة','V لفوق و M عكس عقارب الساعة'],1,'وفي الجزء اليمين بالعكس: V لفوق و M مع عقارب الساعة.'],
+ ['Clockwise couple مطبق على الكمرة (من اليسار لليمين) يخلي الـ BMD:',['ينزل','يطلع لفوق','ما يتغير','يتغير ميله بس'],1,'Clockwise ↻ قفزة لفوق، counterclockwise ↺ قفزة لتحت.'],
+ ['حمل أفقي على عضو مائل في frame. قبل ما نرسم V و M:',['نستخدمه زي ما هو','نحلله لمركبة عمودية على العضو وموازية له','نهمله','نحوله لعزم'],1,'المركبة العمودية تعطي V و M، والموازية تعطي N.'],
+ ['طلع الـ reaction بإشارة سالبة. معناه:',['الحل غلط','اتجاهه عكس اللي فرضته','الكمرة unstable','نضربه في 2'],1,'الرقم صحيح، بس الاتجاه معكوس.'],
+ ['متى تحتاج دالة V(x) و M(x) جديدة؟',['كل 1 m','عند كل تغير في الحمل: قوة مركزة، couple، بداية أو نهاية حمل موزع، أو support','عند V = 0 بس','ما نحتاج أبداً'],1,'هذي النقاط هي الـ discontinuities في دوال V و M.']
+];
+
+const MISTAKES=['نسيان قفزة الـ concentrated moment في الـ BMD.','وضع قفزة في الـ SFD عند concentrated moment (غلط، ما يأثر).','عدم حساب M عند نقطة V = 0 (فيها M_max).','خلط إشارة العزم: الشد تحت = موجب.','استخدام المحصلة الكاملة للحمل الموزع داخل القطع بدل محصلة الجزء المقطوع بس.','نسيان إن ذراع محصلة المثلث 1/3 من الطرف الكبير، مو النص.','في الـ cantilever نسيان الـ reaction moment عند الـ fixed support.','في الـ frame المائل استخدام القوى بدون تحليلها ⊥ و ∥ للعضو.'];
+
+/* ---------- state ---------- */
+const store={get(k,d){try{const v=localStorage.getItem('f6:'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('f6:'+k,JSON.stringify(v))}catch(e){}}};
+let planDone=store.get('plan',{}),exDone=store.get('ex',{}),qState={},lvlF=0;
+const app=document.getElementById('app');
+const TABS=[['plan','خطة المذاكرة'],['learn','الشرح'],['examples','الأمثلة المحلولة'],['calc','الحاسبة'],['formulas','القوانين'],['quiz','اختبر نفسك']];
+
+/* ---------- pages ---------- */
+function planPage(){const n=PLAN.filter(p=>planDone[p[0]]).length,mins=PLAN.reduce((a,p)=>a+p[4],0);
+  return `<p class="lead">رتبت لك الفصل بالترتيب اللي يبني بعضه على بعض. خلص كل خطوة واضغط "خلصت". المجموع تقريباً ${Math.round(mins/60*10)/10} ساعات.</p>
+  <div class="prog" style="margin-bottom:12px"><span class="num">${n}/${PLAN.length}</span><div class="bar"><i style="width:${n/PLAN.length*100}%"></i></div><span>${Math.round(n/PLAN.length*100)}%</span></div>
+  <ol class="plan">${PLAN.map(([id,t,d,links,min])=>`<li class="${planDone[id]?'done':''}"><div><b>${t}</b><p>${d} <span class="num" style="font-size:.8rem">· ${min} د</span></p><div class="links">${links.map(([h,l])=>`<a class="chip" href="${h}">${l}</a>`).join('')}</div></div><button class="tbtn" data-plan="${id}">${planDone[id]?'✓ خلصت':'خلصت'}</button></li>`).join('')}</ol>
+  <div class="sheet" style="margin-top:16px"><div class="eyebrow">طريقة الحل في الاختبار</div><ol style="margin:6px 0;padding-inline-start:22px">
+  <li>ارسم الـ FBD واحسب الـ reactions، وتأكد بمعادلة ثالثة (ΣM حول نقطة ثانية).</li><li>حدد النقاط المهمة: الركائز، الأحمال المركزة، بداية ونهاية الأحمال الموزعة، والـ couples.</li><li>ارسم الـ SFD من اليسار لليمين: قفزة عند كل قوة، وميل = شدة الحمل.</li><li>أوجد V = 0، ومنها M_max.</li><li>ارسم الـ BMD بالمساحات، وتأكد إنه يرجع صفر عند الأطراف الحرة والـ hinges والركائز البسيطة.</li></ol></div>`}
+
+function signSvg(){return `<svg class="drw" viewBox="0 0 560 170" role="img" aria-label="الاتجاهات الموجبة لـ V و M" direction="ltr">${DEFS}
+ <rect x="40" y="70" width="170" height="22" class="sup"/><rect x="350" y="70" width="170" height="22" class="sup"/>
+ ${svgL(210,40,210,120,'dim','stroke-dasharray="4 4"')}${svgL(350,40,350,120,'dim','stroke-dasharray="4 4"')}
+ ${AR(222,58,222,104,'ld')}${svgT(232,112,'V','ldt','start')}${arc(210,81,30,false,'rxl')}${svgT(244,52,'M','rxt','start')}
+ ${AR(338,104,338,58,'ld')}${svgT(328,112,'V','ldt','end')}${arc(350,81,30,true,'rxl')}${svgT(316,52,'M','rxt','end')}
+ ${svgT(125,150,'الجزء اليسار','ph')}${svgT(435,150,'الجزء اليمين','ph')}</svg>`}
+
+function learnPage(){const S=(n,id,t,b)=>`<section class="sheet cpt" id="learn-${n}"><h2><span class="n">${String(n).padStart(2,'0')}</span>${t}</h2>${b}</section>`;
+ const demo=solve({L:6,sup:[pin(0,'A'),rol(6,'B')],loads:[P(2,12),WW(3,6,8)],pts:pts([0,'A'],[2,'C'],[3,'D'],[6,'B'])});
+ return `<div class="stack">
+ ${S(1,'','القوى الداخلية الثلاث',`<p>لما نقطع أي عنصر عند نقطة، يظهر على وجه القطع ثلاث قوى داخلية تحافظ على اتزان كل جزء:</p><ul><li><b>N (Normal force):</b> موازية لمحور العنصر، عمودية على المقطع. شد موجب.</li><li><b class="vt">V (Shear force):</b> موازية لوجه القطع.</li><li><b class="mt">M (Bending moment):</b> عزم حول محور المقطع.</li></ul><p>عضو الـ truss فيه N بس. الكمرة تحت أحمال رأسية فيها V و M بس. الـ frame فيه الثلاثة.</p>`)}
+ ${S(2,'','اصطلاح الإشارات (Sign convention)',`<div class="two"><div><p>الاتجاهات الموجبة:</p><ul><li><b>الجزء اليسار:</b> V لتحت، و M عكس عقارب الساعة ↺.</li><li><b>الجزء اليمين:</b> V لفوق، و M مع عقارب الساعة ↻.</li></ul><p><b class="mt">M موجب</b> = الشد تحت والكمرة تتقعر لفوق (ابتسامة). <b class="mt">M سالب</b> = الشد فوق (hogging)، مثل فوق الـ supports وفي الـ cantilever.</p><p><b class="vt">V موجب</b> = محصلة القوى على يسار القطع لفوق.</p></div><div class="fig" style="padding:10px">${signSvg().replace('min-width:520px','')}</div></div>
+ <div class="box tip">طريقة سريعة: <span class="m">V = Σ(القوى لفوق على يسار القطع)</span> و <span class="m">M = Σ(عزوم القوى اللي على اليسار حول القطع، مع عقارب الساعة موجب)</span>.</div>`)}
+ ${S(3,'','طريقة المقاطع خطوة بخطوة',`<ol><li>احسب الـ reactions من الـ FBD الكامل.</li><li>اقطع عند النقطة المطلوبة، واختار الجزء الأسهل (الأقل أحمال أو اللي ما فيه reactions).</li><li>ارسم الـ FBD للجزء، وحط N و V و M بالاتجاه الموجب.</li><li>الحمل الموزع: خذ محصلة الجزء المقطوع بس، مو المحصلة الكاملة.</li><li><span class="m">ΣF<sub>x</sub> = 0</span> تعطي N، و <span class="m">ΣF<sub>y</sub> = 0</span> تعطي V، و <span class="m">ΣM<sub>section</sub> = 0</span> تعطي M.</li></ol><div class="box warn">إذا طلع الجواب سالب فالاتجاه الحقيقي عكس اللي فرضته، والقيمة السالبة هي اللي تنرسم في المخطط.</div>`)}
+ ${S(4,'','دوال V(x) و M(x)',`<p>نقيس x من طرف الكمرة ونكتب معادلة لكل منطقة. نحتاج منطقة جديدة عند كل:</p><ul><li>قوة مركزة أو couple.</li><li>بداية أو نهاية حمل موزع، أو تغير شكله.</li><li>Support في النص.</li></ul><p>الحمل المثلثي عند القطع شدته بالتناسب: <span class="m">w(x) = w₀·x/L</span>، ومحصلة الجزء <span class="m">½·w(x)·x</span> على بعد <span class="m">x/3</span> من القطع.</p><div class="box tip">Check: اشتق M(x) لازم يطلع V(x)، واشتق V(x) لازم يطلع w(x) (بإشارة سالبة للحمل النازل).</div>`)}
+ ${S(5,'','العلاقات بين w و V و M (الطريقة الرسومية)',`<span class="eq">dV/dx = w(x)          dM/dx = V(x)
+ΔV = −(مساحة الحمل الموزع)     ΔM = (مساحة الـ SFD)</span>
+ <div class="tw"><table class="t"><thead><tr><th>الحمل على المنطقة</th><th class="vt">شكل الـ SFD</th><th class="mt">شكل الـ BMD</th></tr></thead><tbody>
+ <tr><td>ما فيه حمل</td><td>ثابت (أفقي)</td><td>خط مستقيم مائل</td></tr><tr><td>Uniform w</td><td>خط مائل بميل −w</td><td>Parabola (درجة 2)</td></tr><tr><td>Triangular</td><td>درجة 2</td><td>درجة 3 (cubic)</td></tr><tr><td>قوة مركزة P</td><td>قفزة بمقدار P وباتجاهها</td><td>كسرة (تغير في الميل)</td></tr><tr><td>Couple M₀</td><td>ما يتأثر</td><td>قفزة بمقدار M₀: ↻ لفوق، ↺ لتحت</td></tr></tbody></table></div>
+ <p>مثال يجمع كل شي: قوة مركزة 12 kN عند 2 m، وحمل 8 kN/m من 3 إلى 6 m. لاحظ الـ SFD ثابت ثم قفزة ثم ميل، والـ BMD خطوط ثم parabola وقمتها عند V = 0.</p>
+ <div class="fig">${drawBeam(demo,{diag:true,react:true})}</div>`)}
+ ${S(6,'','أين نحسب قيم العزوم؟',`<ol><li>بداية ونهاية الكمرة.</li><li>عند كل حمل مركز.</li><li>بداية ونهاية الأحمال الموزعة.</li><li>عند الركائز الوسطية.</li><li>قبل وبعد أي عزم مركز.</li><li>عند V = 0، وهنا يكون M الأقصى المحلي.</li></ol><p>وتأكد إن M = 0 عند الطرف الحر، وعند الـ pin والـ roller في الأطراف، وعند الـ internal hinge.</p>`)}
+ ${S(7,'','الكمرات المركبة و Superposition',`<p><b>Compound beam:</b> نفك عند الـ internal hinge. نبدأ بالجزء اللي مجاهيله ثلاثة أو أقل، ونحط قوة الـ hinge على الجزء الثاني بعكس الاتجاه. العزم عند الـ hinge صفر.</p><p><b>Superposition:</b> نرسم BMD لكل حمل لحاله على كمرة بسيطة (غالباً cantilever)، ونجمع القيم. يعطي أشكال بسيطة: ثابت، خطي، parabola، cubic.</p>`)}
+ ${S(8,'','الإطارات Frames',`<ol><li>احسب الـ reactions من الإطار كامل.</li><li>افصل كل عضو عند الـ joints. الـ rigid joint ينقل نفس الـ moment من عضو للثاني.</li><li>العضو المائل: حلل كل قوة لمركبة موازية للعضو (N) وعمودية عليه (V). الحمل الأفقي على عضو مائل نوزعه على طول العضو ثم نحلله.</li><li>ارسم الـ BMD على كل عضو، والعادة نرسمه على جهة الشد (أو حسب طريقة الدكتور).</li></ol><div class="box tip">في المثلث 3-4-5: <span class="m">sinθ = 0.8</span> و <span class="m">cosθ = 0.6</span> (θ = 53.13°).</div>`)}
+ </div>`}
+
+function examplesPage(){
+ const done=EX.filter(e=>exDone[e.id]).length;
+ let h=`<p class="lead">${EX.length} مثال مرتبة بالترتيب اللي تذاكر فيه. افتح المثال وحاول تحل بنفسك، وبعدين اكشف الحل خطوة خطوة.</p>
+ <div class="prog"><span class="num">${done}/${EX.length}</span><div class="bar"><i style="width:${done/EX.length*100}%"></i></div><span>محلول</span></div>
+ <div class="filters" style="margin-top:10px"><span>المستوى:</span>${[[0,'الكل'],[1,'سهل'],[2,'متوسط'],[3,'صعب']].map(([v,l])=>`<button data-lvl="${v}" aria-pressed="${lvlF===v}">${l}</button>`).join('')}</div>`;
+ GROUPS.forEach(g=>{const list=EX.filter(e=>e.g===g.id&&(!lvlF||e.lvl===lvlF));if(!list.length)return;
+  h+=`<section class="grp"><h2>${g.name}</h2><p>${g.desc}</p><div class="cards">${list.map(e=>`<a class="card" href="#ex-${e.id}"><span class="no">${e.no}</span><h3 dir="auto" style="text-align:right">${e.title}</h3><p>${e.short}</p><div class="row"><span class="lvl l${e.lvl}">${LVL[e.lvl]}</span>${exDone[e.id]?'<span class="donem">✓ محلول</span>':''}</div></a>`).join('')}</div></section>`});
+ return h}
+
+let reveal={};
+function exPage(id){const i=EX.findIndex(e=>e.id===id),e=EX[i];if(!e)return examplesPage();
+ const n=reveal[id]||0,all=n>=e.steps.length,prev=EX[i-1],next=EX[i+1];
+ return `<div class="stack">
+ <a href="#examples" style="font-size:.9rem">→ رجوع للأمثلة</a>
+ <div class="exh"><span class="no ltr" style="text-align:right">${e.no}</span><h2 dir="auto" style="text-align:right">${e.title}</h2><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="lvl l${e.lvl}">${LVL[e.lvl]}</span><span class="src">${e.src}</span></div></div>
+ <section class="sheet stack"><div class="eyebrow">السؤال</div><p class="qtext">${e.q}</p><ul class="given">${e.given.map(g=>`<li>${g}</li>`).join('')}</ul>
+ ${e.sys&&!e.sys.err?`<div class="fig">${drawBeam(e.sys,{react:false})}</div>${e.specNote?`<p class="lead" style="margin:0;font-size:.88rem">${e.specNote}</p>`:''}`:''}</section>
+ <section class="sheet stack"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div class="eyebrow">الحل</div>
+  <div class="ctl"><button class="btn pri" data-step="${id}" ${all?'disabled':''}>الخطوة التالية (${Math.min(n,e.steps.length)}/${e.steps.length})</button><button class="btn" data-all="${id}" ${all?'disabled':''}>اعرض الحل كامل</button>${n?`<button class="btn" data-hide="${id}">أخفِ الحل</button>`:''}</div></div>
+  ${n===0?`<div class="hidden-sol">جرّب تحل بالورقة أول. لما تخلص، اكشف خطوة وحدة وقارن.</div>`:`<ol class="steps">${e.steps.slice(0,n).map(([t,d,q])=>`<li><div><b>${t}</b>${d?`<span class="d">${d}</span>`:''}${q?`<span class="q">${q}</span>`:''}</div></li>`).join('')}</ol>`}
+  ${all?`<div class="ans"><div class="eyebrow" style="color:var(--vcol)">الجواب النهائي</div>${e.ans}</div><div class="idea"><b>الفكرة:</b> ${e.idea}</div>`:''}
+ </section>
+ ${all&&e.sys&&!e.sys.err?`<section class="sheet stack"><div class="eyebrow">المخططات (محسوبة)</div><div class="fig">${drawBeam(e.sys,{diag:true,react:true})}</div><div class="res">${reacText(e.sys)}<div class="hi"><span>M<sub>max</sub></span><b>${fmt(e.sys.Mmax.v)} @ x = ${fmt(e.sys.Mmax.x)}</b></div><div class="hi"><span>M<sub>min</sub></span><b>${fmt(e.sys.Mmin.v)} @ x = ${fmt(e.sys.Mmin.x)}</b></div></div>${keyTable(e.sys)}${e.spec.R?'':`<div><button class="btn" data-tocalc="${id}">افتح في الحاسبة وغيّر الأرقام</button></div>`}</section>`:''}
+ <div class="ctl"><button class="btn ${exDone[id]?'':'pri'}" data-exdone="${id}">${exDone[id]?'✓ حليته (اضغط للإلغاء)':'علّم إني حليته'}</button></div>
+ <nav class="exnav">${prev?`<a href="#ex-${prev.id}">→ ${prev.no}</a>`:'<span></span>'}${next?`<a href="#ex-${next.id}">${next.no} ←</a>`:'<span></span>'}</nav></div>`}
+
+/* calculator */
+let calc=store.get('calc',null)||{L:8,mode:'ss',xa:0,xb:8,loads:[{k:'w',a:0,b:8,w1:10,w2:10,x:0,v:0},{k:'P',x:3,v:25,a:0,b:0,w1:0,w2:0}]};
+function calcSpec(){const c=calc,L=+c.L;let sup;
+ if(c.mode==='ss')sup=[pin(+c.xa,'A'),rol(+c.xb,'B')];else if(c.mode==='cl')sup=[fix(0,'A')];else sup=[fix(L,'B')];
+ const loads=c.loads.map(l=>l.k==='P'?P(+l.x,+l.v):l.k==='M'?MM(+l.x,+l.v):WW(Math.max(0,+l.a),Math.min(L,+l.b),+l.w1,+l.w2));
+ const p=sup.map(s=>({x:s.x,t:s.lab}));if(!p.some(q=>Math.abs(q.x)<1e-9))p.push({x:0,t:''});
+ return{L,sup,loads,pts:p}}
+function calcPage(){const c=calc;
+ const f=(id,lab,val,u,ex='')=>`<label class="fld" for="${id}">${lab}<input id="${id}" type="number" step="any" value="${val}" ${ex} inputmode="decimal"></label>`;
+ return `<p class="lead">اكتب أي كمرة determinate وتطلع لك الـ reactions والـ SFD والـ BMD وأكبر عزم فوراً. استخدمها عشان تتأكد من حلك، مو بدال الحل.</p>
+ <div class="presets"><span>جاهزة من الأمثلة:</span>${EX.filter(e=>e.spec&&!e.spec.R&&(e.spec.sup.length===2&&e.spec.sup.every(s=>s.t!=='fixed')||e.spec.sup.length===1)).map(e=>`<button data-preset="${e.id}">${e.no}</button>`).join('')}</div>
+ <section class="sheet stack" style="margin-top:10px"><div class="eyebrow">الكمرة</div>
+ <div class="form">${f('c-L','الطول L (m)',c.L)}
+ <label class="fld" for="c-mode">نوع الركائز<select id="c-mode"><option value="ss" ${c.mode==='ss'?'selected':''}>Pin + Roller</option><option value="cl" ${c.mode==='cl'?'selected':''}>Cantilever: fixed يسار</option><option value="cr" ${c.mode==='cr'?'selected':''}>Cantilever: fixed يمين</option></select></label>
+ ${c.mode==='ss'?f('c-xa','مكان الـ pin A (m)',c.xa)+f('c-xb','مكان الـ roller B (m)',c.xb):''}</div>
+ <div class="eyebrow">الأحمال <span style="color:var(--muted);font-weight:400;letter-spacing:0">(P لتحت موجب، M مع عقارب الساعة موجب، w لتحت موجب)</span></div>
+ <div class="loads">${c.loads.map((l,i)=>`<div class="lrow"><label class="fld" for="l-${i}-k">النوع<select id="l-${i}-k" data-li="${i}" data-f="k"><option value="P" ${l.k==='P'?'selected':''}>قوة P</option><option value="w" ${l.k==='w'?'selected':''}>حمل موزع w</option><option value="M" ${l.k==='M'?'selected':''}>عزم M</option></select></label>
+  ${l.k==='w'?['a','b','w1','w2'].map((k,j)=>`<label class="fld" for="l-${i}-${k}">${['من a (m)','إلى b (m)','w عند a','w عند b'][j]}<input id="l-${i}-${k}" type="number" step="any" value="${l[k]}" data-li="${i}" data-f="${k}"></label>`).join(''):`<label class="fld" for="l-${i}-x">المكان x (m)<input id="l-${i}-x" type="number" step="any" value="${l.x}" data-li="${i}" data-f="x"></label><label class="fld" for="l-${i}-v">${l.k==='P'?'P (kN)':'M (kN·m)'}<input id="l-${i}-v" type="number" step="any" value="${l.v}" data-li="${i}" data-f="v"></label><span></span><span></span>`}
+  <button class="x" data-del="${i}" aria-label="احذف الحمل">×</button></div>`).join('')}</div>
+ <div class="ctl"><button class="btn" data-add="P">+ قوة</button><button class="btn" data-add="w">+ حمل موزع</button><button class="btn" data-add="M">+ عزم</button></div></section>
+ <section class="sheet stack" id="calc-out" style="margin-top:12px"></section>`}
+function calcOut(){const el=document.getElementById('calc-out');if(!el)return;const spec=calcSpec();
+ if(!(spec.L>0)){el.innerHTML='<p class="err">اكتب طول أكبر من صفر.</p>';return}
+ const bad=spec.sup.find(s=>s.x<0||s.x>spec.L);if(bad){el.innerHTML='<p class="err">مكان الركيزة لازم يكون بين 0 و L.</p>';return}
+ const sys=solve(spec);if(sys.err){el.innerHTML=`<p class="err">${sys.err}</p>`;return}
+ el.innerHTML=`<div class="eyebrow">النتيجة</div><div class="res">${reacText(sys)}<div class="hi"><span>M<sub>max</sub></span><b>${fmt(sys.Mmax.v)} @ x = ${fmt(sys.Mmax.x)}</b></div><div class="hi"><span>M<sub>min</sub></span><b>${fmt(sys.Mmin.v)} @ x = ${fmt(sys.Mmin.x)}</b></div><div><span>|V|<sub>max</sub></span><b>${fmt(Math.abs(sys.Vabs))} kN</b></div>${sys.roots.map(x=>`<div><span>V = 0 عند</span><b>x = ${fmt(x,3)} m</b></div>`).join('')}</div><div class="fig">${drawBeam(sys,{diag:true,react:true})}</div>${keyTable(sys)}`}
+
+function formulasPage(){const C=(t,b,w='')=>`<div class="fcard ${w}"><h3>${t}</h3>${b}</div>`;
+ return `<p class="lead">ورقة المراجعة قبل الاختبار.</p><div class="fcards">
+ ${C('العلاقات الأساسية',`<span class="eq">dV/dx = w(x)
+dM/dx = V(x)
+ΔV = −∫w dx      ΔM = ∫V dx</span>`)}
+ ${C('القفزات',`<ul><li>قوة P لتحت: الـ V ينزل P.</li><li>Reaction لفوق: الـ V يطلع بمقداره.</li><li>Couple ↻: الـ M يطلع M₀.</li><li>Couple ↺: الـ M ينزل M₀.</li></ul>`)}
+ ${C('محصلات الأحمال',`<ul><li>مستطيل: <span class="m">W = wL</span> في النص.</li><li>مثلث: <span class="m">W = ½w₀L</span> على L/3 من الطرف الكبير.</li><li>شبه منحرف: مستطيل + مثلث.</li><li>الشدة عند x في المثلث: <span class="m">w₀x/L</span>.</li></ul>`)}
+ ${C('اصطلاح الإشارات',`<ul><li>يسار القطع: V ↓ و M ↺ موجبين.</li><li>يمين القطع: V ↑ و M ↻ موجبين.</li><li>M موجب = شد تحت.</li><li>N موجب = شد.</li></ul>`)}
+ ${C('M_max',`<ul><li>عند V = 0 (أو عند تغير إشارة V عند قوة مركزة).</li><li>قيمته = مساحة الـ SFD من الطرف لين هذي النقطة (لو M البداية صفر).</li></ul>`)}
+ ${C('المثلث 3-4-5',`<span class="eq">sinθ = 0.8   cosθ = 0.6   θ = 53.13°</span>`)}
+ </div>
+ <h2 style="font-size:1.1rem;margin:20px 0 8px">حالات قياسية تحفظها</h2>
+ <div class="tw sheet" style="padding:0"><table class="t"><thead><tr><th>الحالة</th><th class="m">Reactions</th><th class="m">M_max</th><th>المكان</th></tr></thead><tbody>
+ <tr><td>Simply supported + UDL w</td><td class="m">wL/2 , wL/2</td><td class="m">wL²/8</td><td>النص</td></tr>
+ <tr><td>Simply supported + P في النص</td><td class="m">P/2 , P/2</td><td class="m">PL/4</td><td>النص</td></tr>
+ <tr><td>Simply supported + P على بعد a</td><td class="m">Pb/L , Pa/L</td><td class="m">Pab/L</td><td>تحت P</td></tr>
+ <tr><td>Simply supported + مثلث 0 → w₀</td><td class="m">w₀L/6 , w₀L/3</td><td class="m">w₀L²/(9√3) ≈ 0.0642 w₀L²</td><td>x = L/√3 = 0.577L</td></tr>
+ <tr><td>Simply supported + مثلث قمته في النص</td><td class="m">w₀L/4 , w₀L/4</td><td class="m">w₀L²/12</td><td>النص</td></tr>
+ <tr><td>Cantilever + P بالطرف</td><td class="m">P , M = PL</td><td class="m">−PL</td><td>الـ fixed</td></tr>
+ <tr><td>Cantilever + UDL w</td><td class="m">wL , M = wL²/2</td><td class="m">−wL²/2</td><td>الـ fixed</td></tr>
+ <tr><td>Cantilever + مثلث (الصفر عند الطرف الحر)</td><td class="m">w₀L/2 , M = w₀L²/3</td><td class="m">−w₀L²/3</td><td>الـ fixed</td></tr>
+ <tr><td>Cantilever + مثلث (الصفر عند الـ fixed)</td><td class="m">w₀L/2 , M = w₀L²/6</td><td class="m">−w₀L²/6</td><td>الـ fixed</td></tr>
+ </tbody></table></div>
+ <div class="fcards" style="margin-top:14px">${C('أخطاء شائعة',`<ul>${MISTAKES.map(m=>`<li>${m}</li>`).join('')}</ul>`,'warn')}</div>`}
+
+function quizPage(){const n=Object.keys(qState).length,r=Object.entries(qState).filter(([i,k])=>QUIZ[i][2]===k).length;
+ return `<p class="lead">اختر الإجابة وتطلع لك النتيجة مع الشرح.</p><div class="score"><b class="num">${r}</b> صحيحة من ${n} · باقي ${QUIZ.length-n}</div>
+ <div class="stack">${QUIZ.map(([q,o,a,w],i)=>{const s=qState[i];return `<div class="qc"><p class="qq"><span class="num">Q${i+1}</span>${q}</p><div class="opts">${o.map((t,k)=>`<button dir="auto" data-q="${i}" data-k="${k}" class="${s!=null?(k===a?'right':k===s?'wrong':''):''}" ${s!=null?'disabled':''}>${t}</button>`).join('')}</div>${s!=null?`<p class="why">${w}</p>`:''}</div>`}).join('')}</div>
+ <div class="ctl" style="margin-top:12px"><button class="btn" data-qreset="1">أعد الاختبار</button></div>`}
+
+/* ---------- router ---------- */
+function route(){const h=(location.hash||'#plan').slice(1);let tab=h,html;
+ if(h.startsWith('ex-')){tab='examples';html=exPage(h.slice(3))}
+ else if(h.startsWith('learn-')){tab='learn';html=learnPage()}
+ else html=({plan:planPage,learn:learnPage,examples:examplesPage,calc:calcPage,formulas:formulasPage,quiz:quizPage}[h]||planPage)();
+ if(!TABS.some(t=>t[0]===tab))tab='plan';
+ document.getElementById('tabs').innerHTML=TABS.map(([id,l])=>`<a href="#${id}" class="${id===tab?'on':''}">${l}</a>`).join('');
+ app.innerHTML=html;if(tab==='calc')calcOut();
+ if(h.startsWith('learn-')){const el=document.getElementById(h);if(el)el.scrollIntoView()}else window.scrollTo(0,0);
+}
+function rerender(keepScroll=true){const y=window.scrollY;const h=(location.hash||'#plan').slice(1);
+ app.innerHTML=h.startsWith('ex-')?exPage(h.slice(3)):({plan:planPage,examples:examplesPage,calc:calcPage,quiz:quizPage}[h]||planPage)();
+ if(h==='calc')calcOut();if(keepScroll)window.scrollTo(0,y)}
+window.addEventListener('hashchange',route);
+app.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;const d=b.dataset;
+ if(d.plan){planDone[d.plan]=!planDone[d.plan];store.set('plan',planDone);rerender()}
+ else if(d.lvl!=null){lvlF=+d.lvl;rerender()}
+ else if(d.step){reveal[d.step]=(reveal[d.step]||0)+1;rerender()}
+ else if(d.all){reveal[d.all]=99;rerender()}
+ else if(d.hide){reveal[d.hide]=0;rerender()}
+ else if(d.exdone){exDone[d.exdone]=!exDone[d.exdone];store.set('ex',exDone);rerender()}
+ else if(d.q!=null){qState[d.q]=+d.k;rerender()}
+ else if(d.qreset){qState={};rerender(false)}
+ else if(d.tocalc||d.preset){const e=EX.find(x=>x.id===(d.tocalc||d.preset)),s=e.spec,fx=s.sup.find(q=>q.t==='fixed');
+  calc={L:s.L,mode:fx?(fx.x<s.L/2?'cl':'cr'):'ss',xa:fx?0:s.sup[0].x,xb:fx?s.L:s.sup[1].x,loads:s.loads.map(l=>Object.assign({x:0,v:0,a:0,b:0,w1:0,w2:0},l))};
+  store.set('calc',calc);if(d.tocalc)location.hash='calc';else rerender()}
+ else if(d.add){const L=+calc.L||1;calc.loads.push(d.add==='w'?{k:'w',a:0,b:L,w1:10,w2:10,x:0,v:0}:{k:d.add,x:L/2,v:10,a:0,b:L,w1:10,w2:10});store.set('calc',calc);rerender()}
+ else if(d.del!=null){calc.loads.splice(+d.del,1);store.set('calc',calc);rerender()}
+});
+app.addEventListener('input',ev=>{const t=ev.target;if(!t.closest('.sheet')||location.hash!=='#calc')return;
+ if(t.id==='c-L'){calc.L=t.value;if(calc.mode==='ss'&&+calc.xb>+t.value)calc.xb=t.value}
+ else if(t.id==='c-xa')calc.xa=t.value;else if(t.id==='c-xb')calc.xb=t.value;
+ else if(t.dataset.li!=null&&t.dataset.f!=='k')calc.loads[+t.dataset.li][t.dataset.f]=t.value;else return;
+ store.set('calc',calc);calcOut()});
+app.addEventListener('change',ev=>{const t=ev.target;if(location.hash!=='#calc')return;
+ if(t.id==='c-mode'){calc.mode=t.value;if(t.value==='ss'){calc.xa=0;calc.xb=calc.L}store.set('calc',calc);rerender()}
+ else if(t.dataset.f==='k'){calc.loads[+t.dataset.li].k=t.value;store.set('calc',calc);rerender()}});
+route();
+</script>
+</body>
+</html>
