@@ -735,3 +735,9 @@ html.solmode .wrap{max-width:none;padding:0}
 .fcc .sgn text,.solg .sgn text{font-size:25px}
 .sgrid{grid-template-columns:repeat(auto-fill,minmax(700px,1fr))!important}
 .solg .fcol{width:1600px!important}
+
+/* solution canvas: parts in rows of 3, steps in a 3-column grid */
+.fflow.fgrid{display:flex!important;flex-direction:column!important;gap:110px!important;align-items:flex-start}
+.frow{display:flex;flex-direction:row;gap:110px;align-items:flex-start}
+.fcc .fband.wide .sgrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:50px 60px}
+.fcc .fband.wide .sgrid > .dstep{grid-column:auto!important}
