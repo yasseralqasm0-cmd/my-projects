@@ -739,7 +739,7 @@ html.solmode .wrap{max-width:none;padding:0}
 /* solution canvas: equal boxes in a 3-4 column grid, larger type */
 .fflow{display:block!important}
 .fmeas{position:absolute;left:-99999px;top:0}
-.fgrid2{display:grid;direction:rtl;align-items:start}
+.fgrid2{display:grid;direction:ltr;align-items:start}
 .fcell{display:flex;flex-direction:column;gap:4px;min-width:0;direction:rtl}
 .fcell > *{max-width:100%}
 .fcell .fpt small{font-size:60%;color:#5e6b74}

@@ -4092,7 +4092,7 @@ function examPage(id){const x=XM.find(e=>e.id===id);if(!x){location.hash='#exams
   <nav class="nav"><a class="navb" ${prev?`href="#xm${prev.id}"`:'aria-disabled="true"'}>→ ${prev?prev.title:'السابق'}</a><a class="navb" ${next?`href="#xm${next.id}"`:'aria-disabled="true"'}>${next?next.title:'التالي'} ←</a></nav>`;
  window.scrollTo(0,0);SE=xPseudo(x);simStop();simSet(0);applyStatics();FC.init('xm'+id)}
 /* solution layout: every part is cut into boxes of the same width (a long part continues in the next box),
-   then the boxes sit in a grid of 3 or 4 columns, read right to left */
+   then the boxes sit in a grid of 3 or 4 columns, read left to right */
 function packCells(flow){const CW=1150,MAXH=1700,GAP=34;
  const meas=document.createElement('div');meas.className='fmeas';meas.style.width=CW+'px';flow.appendChild(meas);
  const cells=[];let gi=0;
@@ -4117,8 +4117,8 @@ const FC={s:1,x:0,y:0,z:10,key:'',
  zoomAt(f,cx,cy){const ns=Math.min(4,Math.max(0.08,this.s*f));this.x=cx-(cx-this.x)*ns/this.s;this.y=cy-(cy-this.y)*ns/this.s;this.s=ns;this.apply()},
  bounds(){let X0=1e9,Y0=1e9,X1=-1e9,Y1=-1e9;this.cv().querySelectorAll('.fi').forEach(e=>{const x=parseFloat(e.style.left),y=parseFloat(e.style.top),k=+e.dataset.k||1;X0=Math.min(X0,x);Y0=Math.min(Y0,y);X1=Math.max(X1,x+e.offsetWidth*k);Y1=Math.max(Y1,y+e.offsetHeight*k)});return{X0,Y0,X1,Y1}},
  fit(){const v=this.el(),b=this.bounds();if(b.X1<b.X0)return;const s=Math.min(v.clientWidth/(b.X1-b.X0+40),v.clientHeight/(b.Y1-b.Y0+40),1.2);this.s=s;this.x=(v.clientWidth-(b.X1-b.X0)*s)/2-b.X0*s;this.y=(v.clientHeight-(b.Y1-b.Y0)*s)/2-b.Y0*s;this.apply()},
- save(){try{const d={};this.cv().querySelectorAll('.fi').forEach(e=>d[e.dataset.i]=[parseFloat(e.style.left),parseFloat(e.style.top),+e.dataset.k||1]);localStorage.setItem('ce360-fc4-'+this.key,JSON.stringify(d))}catch(_){}},
- load(){try{return JSON.parse(localStorage.getItem('ce360-fc4-'+this.key)||'null')}catch(_){return null}},
+ save(){try{const d={};this.cv().querySelectorAll('.fi').forEach(e=>d[e.dataset.i]=[parseFloat(e.style.left),parseFloat(e.style.top),+e.dataset.k||1]);localStorage.setItem('ce360-fc5-'+this.key,JSON.stringify(d))}catch(_){}},
+ load(){try{return JSON.parse(localStorage.getItem('ce360-fc5-'+this.key)||'null')}catch(_){return null}},
  setK(e,k){e.dataset.k=k;e.style.transform=k===1?'':`scale(${k})`},
  explode(saved){const c=this.cv(),flow=c.querySelector('.fflow');const cr=c.getBoundingClientRect();
   flow.querySelectorAll('.nbl > svg, .nbr > svg, .nb1 > svg').forEach(sv=>{const d=document.createElement('div');d.className='fsv';sv.parentNode.insertBefore(d,sv);d.appendChild(sv)});packCells(flow);const sel='.fcell > *';const items=[...flow.querySelectorAll(sel)].filter(e=>!(e.classList.contains('fpt')&&!e.textContent.trim()));
@@ -4149,7 +4149,7 @@ const FC={s:1,x:0,y:0,z:10,key:'',
   v.querySelector('.fcbar').addEventListener('click',ev=>{const b=ev.target.closest('[data-fc]');if(!b)return;const a=b.dataset.fc;
    if(a==='in'||a==='out')this.zoomAt(a==='in'?1.25:0.8,v.clientWidth/2,v.clientHeight/2);
    else if(a==='fit')this.fit();
-   else if(a==='reset'){try{localStorage.removeItem('ce360-fc4-'+this.key)}catch(_){}const c=this.cv(),sy=window.scrollY;this.s=1;this.x=0;this.y=0;this.apply();c.innerHTML=this.orig;c.style.width='';c.style.height='';try{c.querySelectorAll('[data-state]').forEach(el=>applyState(el,+el.dataset.state,!!el.dataset.sh))}catch(_){}requestAnimationFrame(()=>{this.explode(null);this.fit();window.scrollTo(0,sy)})}
+   else if(a==='reset'){try{localStorage.removeItem('ce360-fc5-'+this.key)}catch(_){}const c=this.cv(),sy=window.scrollY;this.s=1;this.x=0;this.y=0;this.apply();c.innerHTML=this.orig;c.style.width='';c.style.height='';try{c.querySelectorAll('[data-state]').forEach(el=>applyState(el,+el.dataset.state,!!el.dataset.sh))}catch(_){}requestAnimationFrame(()=>{this.explode(null);this.fit();window.scrollTo(0,sy)})}
    else if(a==='full'){v.classList.toggle('full');document.body.classList.toggle('noscroll',v.classList.contains('full'));requestAnimationFrame(()=>this.fit())}});
  }};
 function examsStatic(){let h=`<section class="sx-top" id="exams-o"><h2 style="font-size:1.2rem;margin-bottom:6px">الاختبارات السابقة</h2><div class="sx-toc">${['472','471','462'].map(k=>`<h3>${XEX[k]}</h3>`+XM.filter(x=>x.ex===k).map(x=>`<a href="#xmo${x.id}"><span class="no">${x.no}</span>${x.title}</a>`).join('')).join('')}</div></section>`;
