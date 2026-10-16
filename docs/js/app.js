@@ -3015,6 +3015,29 @@ function frameSim(main,mainVb,F,dvb,n0){// main svg body (with states), diagrams
  let s=emb(raw(main,mainVb),0,0,vw,vh);
  ['N','V','M'].forEach((k,i)=>{s+=emb(raw(frm(F,k,{amp:k==='N'?34:42}),dvb),0,vh,vw,dh,only(i===2?`${n0+2},${n0+3}`:String(n0+i)))+`<g ${only(i===2?`${n0+2},${n0+3}`:String(n0+i))}>${HT(14,vh+22,k==='N'?'N.F.D (kN)':k==='V'?'S.F.D (kN)':'B.M.D (kN.m)','nb','start')}</g>`});
  return {vb:`0 0 ${vw} ${vh+dh}`,svg:s}}
+/* forces on the inclined member AB resolved along it (N) and across it (V), drawn on the main frame */
+function abcAxis(H,w,P,Ay,Cy){const g=fABC(H,w,P),X=g.X,Y=g.Y,L=78;
+ // o = sideways shift so an arrow along the member does not sit on top of it
+ const ar=(p0,d,o,c,lab,dx,dy)=>{const p=[p0[0]+o[0],p0[1]+o[1]];return HA(p[0]-d[0]*L,p[1]-d[1]*L,p[0]-d[0]*5,p[1]-d[1]*5,c,'stroke-width="2.6" stroke-dasharray="7 5"')+HT(p[0]-d[0]*L+dx,p[1]-d[1]*L+dy,lab,c,'middle','font-size="17"')};
+ const A=[X(0),Y(0)],D=[X(1.5),Y(2)],u=[0.6,-0.8],n=[-0.8,-0.6],nm=[0.8,0.6],side=[12*0.8,12*0.6];
+ let s=abcMain(H,w,P,Ay,Cy).replace(/data-from="\d+"/g,'');
+ s+=ar(A,u,[-side[0],-side[1]],'nr',`${Ay*0.8} (∥)`,-30,6)+ar(A,n,[0,0],'nb',`${Ay*0.6} (⊥)`,44,-16);
+ s+=ar(D,u,side,'nr',`${H*0.6} (∥)`,50,10)+ar(D,nm,[0,0],'nb',`${H*0.8} (⊥)`,20,-14);
+ s+=HP(`M${A[0]+46},${A[1]} A46,46 0 0,0 ${A[0]+46*0.6},${A[1]-46*0.8}`,'ng')+HT(A[0]+54,A[1]-14,'θ','ng','start');
+ return nbsvg('-60 0 640 420',s,640)}
+function axisPage(H,w,P,Ay,Cy){const NA=Ay*0.8,VA=Ay*0.6,ND=H*0.6,VD=H*0.8;
+ return nbPage(EH('نعدّل القوى على المحور المائل AB')+
+  NT('AB مائل: 3 m أفقي و 4 m رأسي، فطوله 5 m و sinθ = 4/5 = 0.8 و cosθ = 3/5 = 0.6. نحلل كل قوة على AB لمركبة على طول العضو (∥ تعطي N) ومركبة عمودية عليه (⊥ تعطي V):')+
+  EH(`عند A: A${sub('y')} = ${Ay} ↑`)+
+  E(`∥ = ${Ay} sinθ = ${Ay} × 0.8 = ${MK(`${NA} kN`)} (تدف العضو: ضغط)`)+
+  E(`⊥ = ${Ay} cosθ = ${Ay} × 0.6 = ${MK(`${VA} kN`)}`)+
+  EH(`عند D: ${H} kN →`)+
+  E(`∥ = ${H} cosθ = ${H} × 0.6 = ${MK(`${ND} kN`)}`)+
+  E(`⊥ = ${H} sinθ = ${H} × 0.8 = ${MK(`${VD} kN`)} (عكس ${VA})`)+
+  EH('النتيجة على AB:')+
+  E(`A → D: N = −${NA} ، V = ${VA}`)+
+  E(`D → B: N = −(${NA} + ${ND}) = −${NA+ND} ، V = ${VA} − ${VD} = ${VA-VD}`),
+  abcAxis(H,w,P,Ay,Cy))}
 function abcMain(H,w,P,Ay,Cy){const g=fABC(H,w,P),X=g.X,Y=g.Y;
  return g.s+`<g ${at(1)}>${HA(X(9)+60,Y(4),X(9)+6,Y(4),'nr','stroke-width="2.4"')+HT(X(9)+20,Y(4)-12,`C<tspan font-size="70%" dy="4">x</tspan><tspan dy="-4"> = ${H}</tspan>`,'nr','start')}</g>`
   +`<g ${at(2)}>${HA(X(0),Y(0)+80,X(0),Y(0)+26,'nr','stroke-width="2.4"')+HT(X(0)+8,Y(0)+80,`A<tspan font-size="70%" dy="4">y</tspan><tspan dy="-4"> = ${Ay}</tspan>`,'nr','start')}</g>`
@@ -3468,7 +3491,7 @@ const XFULL={
  EH(`Check: ΣM${sub('A')} = 0 &nbsp;(↺ +)`)+
  E('−45(2) − 180(6) − 60(6) + 150(9) + 45(4)','g')+
  E('= −90 − 1080 − 360 + 1350 + 180 = 0 ✓','g'),
- nbsvg('0 0 580 390',abcMain(45,30,60,90,150).replace(/data-from="\d+"/g,''),600))},
+ nbsvg('0 0 580 390',abcMain(45,30,60,90,150).replace(/data-from="\d+"/g,''),600))+axisPage(45,30,60,90,150)},
 {t:'(b) العضو المائل AB',h:nbPage(
  E('AB: أفقي 3 m، رأسي 4 m ⇒ L = √(3² + 4²) = 5 m')+
  E('cosθ = 3/5 = 0.6 &nbsp;&nbsp; sinθ = 4/5 = 0.8 &nbsp;(θ = 53.13°)')+
@@ -3614,7 +3637,7 @@ const XFULL={
  EH(`Check: ΣM${sub('A')} = 0 &nbsp;(↺ +)`)+
  E('−30(2) − 120(6) − 40(6) + 100(9) + 30(4)','g')+
  E('= −60 − 720 − 240 + 900 + 120 = 0 ✓','g'),
- nbsvg('0 0 580 390',abcMain(30,20,40,60,100).replace(/data-from="\d+"/g,''),600))},
+ nbsvg('0 0 580 390',abcMain(30,20,40,60,100).replace(/data-from="\d+"/g,''),600))+axisPage(30,20,40,60,100)},
 {t:'(b) العضو المائل AB',h:nbPage(
  E('cosθ = 0.6 &nbsp;&nbsp; sinθ = 0.8')+
  EH('عند A:')+
