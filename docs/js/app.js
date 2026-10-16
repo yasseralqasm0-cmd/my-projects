@@ -3360,31 +3360,7 @@ const XFULL={
  EH('عند C (x = 8):')+
  sv('V = 697.5 − 100(8) = 697.5 − 800 = −102.5 kN')+
  sv('M = −40 + 697.5(8) − 50(8)² = −40 + 5580 − 3200 = 2340 kN.m'),'')},
-{t:'(c) N و V و M لكل عضو',h:
- nbPage(EH('AB (0 → 2 m)')+
- NT('ما عليه إلا الـ couple 40 عند A، ولا فيه قوى رأسية ولا أفقية:')+
- E('N = 0')+E('V = 0')+E('M = −40 kN.m (ثابت)'),f472mem(0))+
- nbPage(EH('BC (من الجزء b)')+
- E('V: 697.5 → −102.5 kN')+E('M: −40 → 2392.53 → 2340 kN.m')+E('N = 0'),f472mem(1))+
- nbPage(EH('CD (2 m)')+
- NT('عند C فيه 200 kN لتحت، فالـ V ينزل 200:')+
- E('V = −102.5 − 200 = −302.5 kN (ثابت، ما فيه حمل)')+
- E(`M${sub('D')} = 2340 + (−302.5)(2) = 2340 − 605 = 1735 kN.m`)+
- E('N = 0 (ما فيه قوى أفقية يسار D)'),f472mem(2))+
- nbPage(EH('DE (مائل، 5 m، θ = 36.87°)')+
- NT('القوة الصافية يسار D:')+
- E('697.5 − 800 − 200 = −302.5 kN (يعني 302.5 لتحت)')+
- NT('نحللها على محور العضو. الرأسية: على العضو = F sin(36.87°)، والعمودية = F cos(36.87°):')+
- E(`N${sub('D')} = 302.5 sin(36.87°) = 302.5 × 0.6 = +181.5 kN (tension)`)+
- E(`V${sub('D')} = −302.5 cos(36.87°) = −302.5 × 0.8 = −242 kN`)+
- NT('الحمل 50 kN/m عمودي على DE، فـ N ما يتغيّر، و V ينقص 50 لكل متر:')+
- E(`V${sub('E')} = −242 − 50(5) = −242 − 250 = −492 kN`)+
- E(`M${sub('E')} = M${sub('D')} + ½(V${sub('D')} + V${sub('E')})(5)`)+
- E(`M${sub('E')} = 1735 + ½(−242 − 492)(5) = 1735 + ½(−734)(5) = 1735 − 1835 = −100 kN.m`),f472mem(3))+
- nbPage(EH('EF (1 m) من F')+
- E('V = +100 kN')+E('M = −100(1) = −100 kN.m عند E')+E('N = 0')+
- NT('M<sub>E</sub> من DE = −100 و M<sub>E</sub> من EF = −100 ✓ متساويين.'),f472mem(4))+
- nbPage(EH('الرسومات كاملة'),fDiags(F472,{vb:'0 0 640 250',mw:560,amp:50}))}],
+{t:'(c) N.F.D و S.F.D و B.M.D',h:nbPage(NT('بعد ما طلعت الـ reactions بالاتجاهات الصحيحة، نرسم على الإطار مباشرة. القيم المهمة:')+EH('AB')+E('N = 0 · V = 0 · M = −40 kN.m')+EH('BC')+E('V: 697.5 → −102.5 kN')+E('M: −40 → 2392.53 (x = 6.975) → 2340 kN.m')+EH('CD')+E('V = −302.5 kN · M: 2340 → 1735 kN.m')+EH('DE (θ = 36.87°)')+E('N = +181.5 kN (tension)')+E('V: −242 → −492 kN')+E('M: 1735 → −100 kN.m')+EH('EF')+E('V = +100 kN · M: −100 → 0'),fDiags(F472,{vb:'0 0 640 250',mw:560,amp:50}))}],
 /* ---------- 471 Q1 sign ---------- */
 7:[
 {t:'(a) القوة المسموحة',h:nbPage(
@@ -3847,10 +3823,13 @@ function partBC(H,w,P,Ay,Cy,Fr){const MB=Ay*3-H*2,ME=MB+Ay*3/2,VE1=Ay-w*3,VE2=Ay
  NT('أكبر moment عند E لأن الـ V صار صفر هناك بالضبط.'),
  `<div class="nbfig">${memBC(H,w,P,Ay,Cy)}</div>`)+
  nbPage(EH('5) الرسومات كاملة للإطار')+NT('نجمع AB و BC: كل قيمة عند B متساوية من الجهتين لأن الـ joint rigid.'),fDiags(Fr))}
-XFULL[10][1]={t:'(b) العضو المائل AB',h:partAB(45,90,fABCframe(45,30,60,90,150))};
-XFULL[10][2]={t:'(b) العضو BC والرسومات',h:partBC(45,30,60,90,150,fABCframe(45,30,60,90,150))};
-XFULL[14][1]={t:'(b) العضو المائل AB',h:partAB(30,60,fABCframe(30,20,40,60,100))};
-XFULL[14][2]={t:'(b) العضو BC والرسومات',h:partBC(30,20,40,60,100,fABCframe(30,20,40,60,100))};
+function frDiag(H,w,P,Ay,Cy){const NA=Ay*0.8,VA=Ay*0.6,N2=NA+H*0.6,V2=VA-H*0.8,MD=VA*2.5,MB=MD+V2*2.5,VE=Ay-w*3,ME=MB+Ay*1.5,VC=VE-P-w*3;
+ return nbPage(NT('بعد ما طلعت الـ reactions بالاتجاهات الصحيحة، نرسم على الإطار مباشرة. العضو AB مائل (sinθ = 0.8 · cosθ = 0.6). القيم المهمة:')+
+  EH('AB')+E(`N: −${NA} → −${N2} kN (compression)`)+E(`V: ${VA} → ${V2} kN`)+E(`M: 0 → ${MD} (D) → ${MB} kN.m (B)`)+
+  EH('BC')+E(`N = −${H} kN`)+E(`V: ${Ay} → ${VE} | −${P-VE} → −${-VC} kN`)+E(`M: ${MB} → ${MK(`${ME} kN.m`)} (E) → 0`),
+  fDiags(fABCframe(H,w,P,Ay,Cy)))}
+XFULL[10].splice(1,2,{t:'(b) N.F.D و S.F.D و B.M.D',h:frDiag(45,30,60,90,150)});
+XFULL[14].splice(1,2,{t:'(b) N.F.D و S.F.D و B.M.D',h:frDiag(30,20,40,60,100)});
 XM.forEach(x=>{if(XFULL[x.id])x.parts=XFULL[x.id]});
 /* ===== wind / sign / floor: every stage with its own figure ===== */
 const hideK=(svg,keys)=>keys.reduce((s,k)=>s.split(`<g data-k="${k}">`).join(`<g data-k="${k}" style="display:none">`),svg);
@@ -4163,45 +4142,9 @@ function examsStatic(){let h=`<section class="sx-top" id="exams-o"><h2 style="fo
 document.addEventListener('click',ev=>{const b=ev.target.closest('#ftry');if(!b)return;const v=document.getElementById('fcv');if(!v)return;v.classList.toggle('hide');b.textContent=v.classList.contains('hide')?'إظهار الحل':'إخفاء الحل'});
 /* course examples: same solution canvas */
 const sq=q=>String(q).split('\n').flatMap(l=>l.split(/\s{3,}|،\s+(?=\w)/).join(' \u0002 ').split(/\s+\u0002\s+(?=→)|\s+(?=→\s)/).flatMap(x=>x.split(/\s*\u0002\s*/)).filter(x=>x.trim()).reduce((a,x)=>{if(a.length&&/^→\s*$/.test(a[a.length-1]))a[a.length-1]='→ '+x;else a.push(x);return a},[]).flatMap(x=>{const m=x.match(/^→\s*(.*)$/);if(m){const L=eqLines(m[1]);L[0]='→ '+L[0];return L}return eqLines(x)})).join('\n');
-function f472mem(i){const up=[0,1],dn=[0,-1],A=[0,0],B=[2,0],C=[10,0],D=[12,0],E=[16,3],F=[17,3],u=[0.8,0.6],n=[-0.6,0.8];
- const L=[
-  ()=>memFig({S:70,mem:[[A,B]],Mo:[{p:A,ccw:true,lab:'40'},{p:B,ccw:false,lab:'M = 40'}],nm:[[A,'A',-8,30],[B,'B',8,30]],note:[[[0.2,-0.9],'N = 0 · V = 0','nb']]}),
-  ()=>memFig({S:40,mw:520,mem:[[B,C]],W:[{a:B,b:C,d:dn,lab:'100 kN/m',n:10}],F:[{p:B,d:up,lab:'B_y = 697.5'},{p:C,d:up,lab:'V = 102.5'}],Mo:[{p:B,ccw:true,lab:'40',dx:-30,dy:44,a:'end'},{p:C,ccw:true,lab:'M = 2340',dx:-10,dy:48,a:'end'}],nm:[[B,'B',-16,-10],[C,'C',16,-10]]}),
-  ()=>memFig({S:70,mem:[[C,D]],F:[{p:C,d:dn,lab:'102.5',dx:-30},{p:C,d:dn,lab:'200 kN',c:'nk',len:90,dx:40},{p:D,d:up,lab:'V = 302.5'}],Mo:[{p:C,ccw:false,lab:'2340',dx:-30,dy:44,a:'end'},{p:D,ccw:true,lab:'M = 1735',dx:10,dy:46}],nm:[[C,'C',-16,-12],[D,'D',16,-12]]}),
-  ()=>memFig({S:52,mw:480,mem:[[D,E]],W:[{a:D,b:E,d:[0.6,-0.8],lab:'50 kN/m',n:9,c:'nk'}],F:[{p:D,d:dn,lab:'302.5'},{p:E,d:u,lab:'N = 181.5',from:1},{p:E,d:n,lab:'V = 492',c:'nb'}],Mo:[{p:D,ccw:false,lab:'1735',dx:-30,dy:44,a:'end'},{p:E,ccw:false,lab:'M = 100',dx:-34,dy:-34,a:'end'}],nm:[[D,'D',-16,-12],[E,'E',18,22]],note:[[[13.4,-1.4],'θ = 36.87° · sin = 0.6 · cos = 0.8','nb']]}),
-  ()=>memFig({S:90,mem:[[E,F]],F:[{p:E,d:up,lab:'V = 100'},{p:F,d:dn,lab:'100 kN',c:'nk'}],Mo:[{p:E,ccw:true,lab:'M = 100',dx:-30,dy:-30,a:'end'}],nm:[[E,'E',20,26],[F,'F',16,24]]})];
- return `<div class="nbfig">${L[i]()}</div>`}
-/* ===== one member cut out of the frame, drawn next to its own step ===== */
-function memFig(o){const S=o.S||60,X=x=>x*S,Y=y=>-y*S;let b='',x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;const ex=(x,y)=>{x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y-16);y1=Math.max(y1,y+8)};
- const P=p=>[X(p[0]),Y(p[1])],txt=(x,y,t,c,a='middle')=>{const w=String(t).length*9.2;ex(a==='start'?x:a==='end'?x-w:x-w/2,y);ex(a==='start'?x+w:a==='end'?x:x+w/2,y);return HT(x.toFixed(1),y.toFixed(1),t,c,a)};
- (o.W||[]).forEach(w=>{const a=P(w.a),c=P(w.b),D=[w.d[0],-w.d[1]],h=w.h||38,n=w.n||8,c1=w.c||'nk';const T=q=>[q[0]-D[0]*h,q[1]-D[1]*h];
-  for(let i=0;i<=n;i++){const q=[a[0]+(c[0]-a[0])*i/n,a[1]+(c[1]-a[1])*i/n],t=T(q);b+=HA(t[0],t[1],q[0]-D[0]*5,q[1]-D[1]*5,c1,'stroke-width="1.3"');ex(t[0],t[1])}
-  const ta=T(a),tc=T(c);b+=HL(ta[0],ta[1],tc[0],tc[1],c1,'stroke-width="1.3"');const m=[(ta[0]+tc[0])/2-D[0]*18+(w.dx||0),(ta[1]+tc[1])/2-D[1]*18+5+(w.dy||0)];b+=txt(m[0],m[1],w.lab,c1,D[0]>0.5?'end':D[0]<-0.5?'start':'middle')});
- o.mem.forEach(([p1,p2])=>{const a=P(p1),c=P(p2);b+=HL(a[0],a[1],c[0],c[1],'nk','stroke-width="4.5"');ex(a[0],a[1]);ex(c[0],c[1])});
- (o.F||[]).forEach(f=>{const q=P(f.p),D=[f.d[0],-f.d[1]],L=f.len||62,c=f.c||'nr',st=`stroke-width="2.4"${f.dash?' stroke-dasharray="6 5"':''}`;let t,an;
-  if(f.from){const e=[q[0]+D[0]*L,q[1]+D[1]*L];b+=HA(q[0]+D[0]*4,q[1]+D[1]*4,e[0],e[1],c,st);ex(e[0],e[1]);t=[e[0]+D[0]*8,e[1]+D[1]*14];an=D[0]>0.5?'start':D[0]<-0.5?'end':'middle'}
-  else{const s0=[q[0]-D[0]*L,q[1]-D[1]*L];b+=HA(s0[0],s0[1],q[0]-D[0]*5,q[1]-D[1]*5,c,st);ex(s0[0],s0[1]);t=[s0[0]-D[0]*8,s0[1]-D[1]*14];an=D[0]>0.5?'end':D[0]<-0.5?'start':'middle'}
-  b+=txt(t[0]+(f.dx||0),t[1]+6+(f.dy||0),f.lab,c,f.a||an)});
- (o.Mo||[]).forEach(m=>{const q=P(m.p),r=m.r||22,c=m.c||'nb';b+=MARC(q[0],q[1],r,m.ccw,c);ex(q[0]-r,q[1]-r);ex(q[0]+r,q[1]+r);b+=txt(q[0]+(m.dx??(r+8)),q[1]+(m.dy??(-r-8)),m.lab,c,m.a||'start')});
- (o.nm||[]).forEach(([p,t,dx,dy])=>{const q=P(p);b+=txt(q[0]+dx,q[1]+dy,t,'nk')});
- (o.note||[]).forEach(([p,t,c])=>{const q=P(p);b+=txt(q[0],q[1],t,c||'ng','middle')});
- const pad=18,mn=o.minW||560;if(x1-x0+pad*2<mn){const g=(mn-(x1-x0+pad*2))/2;x0-=g;x1+=g}const W=x1-x0+pad*2,H=y1-y0+pad*2;return nbsvg(`${(x0-pad).toFixed(0)} ${(y0-pad).toFixed(0)} ${W.toFixed(0)} ${H.toFixed(0)}`,b,Math.min(o.mw||480,W*1.05))}
-const up=[0,1],dn=[0,-1],rt=[1,0],lf=[-1,0];
-const MEMFIG={
- 113:(()=>{const A=[0,0],B=[2,1.5],C=[4,1.5],G=[1.6,1.2];
-  const BC=()=>memFig({S:90,mem:[[B,C]],W:[{a:B,b:C,d:dn,lab:'3 kN/m'}],F:[{p:B,d:up,lab:'B_y = 3'},{p:B,d:rt,lab:'B_x = 14.7',dy:-8},{p:C,d:lf,lab:'C_x = 14.7',dy:-8},{p:C,d:up,lab:'C_y = 3'}],nm:[[B,'B',-14,22],[C,'C',14,22]],note:[[[3,0.75],'العضو BC لحاله','nb']]});
-  const AB=()=>memFig({S:90,mem:[[A,B]],F:[{p:A,d:rt,lab:'A_x = 9.87',c:'nr'},{p:A,d:up,lab:'A_y = 9.40',len:56},{p:G,d:[0.6,-0.8],lab:'8 kN',c:'nk'},{p:G,d:rt,lab:'4.8',c:'ng',dash:1,len:46},{p:G,d:dn,lab:'6.4',c:'ng',dash:1,len:46,dx:-14},{p:B,d:lf,lab:'B_x = 14.7',dy:-8},{p:B,d:dn,lab:'B_y = 3'}],nm:[[A,'A',-14,22],[B,'B',14,22]],note:[[[1,-1.15],'العضو AB لحاله','nb']]});
-  return [null,BC,AB,AB,AB,BC]})(),
- 128:(()=>{const A=[0,0],C=[0,3.3],B=[4.5,3.3],D=[0,1.8];
-  const AC=()=>memFig({S:62,mem:[[A,C]],F:[{p:A,d:up,lab:'A_y = 30'},{p:D,d:rt,lab:'15 kN',c:'nk'},{p:C,d:dn,lab:'30'},{p:C,d:lf,lab:'15'}],Mo:[{p:C,ccw:false,lab:'M_C = 22.5',dx:-30,dy:-30,a:'end'}],nm:[[A,'A',-18,8],[C,'C',18,26]],note:[[[0.5,0.6],'العضو AC لحاله','nb']]});
-  const CB=()=>memFig({S:62,mem:[[C,B]],F:[{p:C,d:up,lab:'30'},{p:C,d:dn,lab:'25 kN',c:'nk',dx:12},{p:C,d:rt,lab:'15',dy:-8},{p:B,d:lf,lab:'B_x = 15',dy:-8},{p:B,d:dn,lab:'B_y = 5'}],Mo:[{p:C,ccw:true,lab:'22.5',dx:-30,dy:44,a:'end'}],nm:[[C,'C',-16,28],[B,'B',14,26]],note:[[[2.25,2.4],'العضو CB لحاله','nb']]});
-  return [null,null,null,AC,CB]})(),
- 129:(()=>{const A=[0,0],B=[4,3],C=[8,3],E=[6,3];
-  const BC=()=>memFig({S:62,mem:[[B,C]],F:[{p:B,d:dn,lab:'2.5'},{p:E,d:dn,lab:'80 kN',c:'nk'},{p:C,d:up,lab:'C_y = 82.5'}],Mo:[{p:B,ccw:false,lab:'M_B = 170'}],nm:[[B,'B',-14,26],[C,'C',14,26]],note:[[[6,2.3],'العضو BC لحاله · N = 0','nb']]});
-  const AB=(comp)=>()=>memFig({S:80,mem:[[A,B]],W:comp?[{a:[0.48,0.36],b:B,d:[0.6,-0.8],lab:'⊥ 14.4 kN/m',c:'nk',h:40,n:8}]:[{a:[0.48,0.36],b:B,d:rt,lab:'40 kN/m',c:'nk',h:46,n:8}],F:[{p:A,d:lf,lab:'A_x = 120'},{p:A,d:dn,lab:'A_y = 2.5',from:1,len:54},{p:B,d:up,lab:'2.5'}].concat(comp?[{p:A,d:[-0.6,0.8],lab:'V_A = 70',c:'nb',len:70},{p:A,d:[-0.8,-0.6],lab:'N = 97.5',c:'ng',from:1,len:56,dash:1}]:[]),Mo:[{p:B,ccw:true,lab:'M_B = 170',dx:30,dy:34}],nm:[[A,'A',-16,-8],[B,'B',-18,-10]],note:comp?[[[3.4,0.6],'∥ 19.2 kN/m','nb']]:[[[3.6,0.6],'⊥ 24(0.6) = 14.4','nb'],[[3.6,0.2],'∥ 24(0.8) = 19.2','nb']]});
-  return [null,null,null,BC,AB(0),AB(1),AB(1)]})()
-};
-function stFig(e,k){const mf=MEMFIG[e.id]&&MEMFIG[e.id][k];if(mf)return `<div class="b-draw sfig">${mf()}</div>`;try{return drawHTML(e,k+1,'b-draw sfig').replace('<div class="drw','<div data-sh="1" class="drw')}catch(_){return ''}}
+/* frames: after the reactions are found, steps keep showing the frame with its reactions (no per-step diagrams) */
+const FIXST={128:3,129:3};
+function stFig(e,k){try{return drawHTML(e,FIXST[e.id]?Math.min(k+1,FIXST[e.id]):k+1,'b-draw sfig').replace('<div class="drw','<div data-sh="1" class="drw')}catch(_){return ''}}
 function exBands(e){const old=e.ch==='c1',SQ=old?(q=>q):sq,FG=old?(()=>''):stFig,WF=old?'':' wf';const last=simSteps(e).length-1,W=WHY[e.id]||[],D=DET[e.id];
  const fig=e.cases&&e.img?`<img class="b-fig" src="${IMG[e.img]}" alt="" draggable="false">`:drawHTML(e,0);
  const q=nbPage(`<div class="exq" dir="auto">${e.q}</div><table class="gtab">${e.given.map((g,k)=>`<tr><td>${k+1}</td><td>${g}</td></tr>`).join('')}</table>`,fig);
