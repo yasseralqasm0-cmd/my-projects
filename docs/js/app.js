@@ -2249,7 +2249,6 @@ function exPageOld(id){
 }
 function exPage(id){
   const e=EX.find(x=>x.id===id); if(!e){location.hash='';return}
-  if(e.ch==='c1')return exPageOld(id);
   const i=EX.indexOf(e), prev=EX[i-1], next=EX[i+1];xsStop();
   app.classList.add('wide');
   app.innerHTML=`<div class="bar"><button class="back" data-home>→ كل الأمثلة</button>
@@ -3017,7 +3016,7 @@ function frameSim(main,mainVb,F,dvb,n0){// main svg body (with states), diagrams
  ['N','V','M'].forEach((k,i)=>{s+=emb(raw(frm(F,k,{amp:k==='N'?34:42}),dvb),0,vh,vw,dh,only(i===2?`${n0+2},${n0+3}`:String(n0+i)))+`<g ${only(i===2?`${n0+2},${n0+3}`:String(n0+i))}>${HT(14,vh+22,k==='N'?'N.F.D (kN)':k==='V'?'S.F.D (kN)':'B.M.D (kN.m)','nb','start')}</g>`});
  return {vb:`0 0 ${vw} ${vh+dh}`,svg:s}}
 function abcMain(H,w,P,Ay,Cy){const g=fABC(H,w,P),X=g.X,Y=g.Y;
- return g.s+`<g ${at(1)}>${HA(X(9)+60,Y(4),X(9)+6,Y(4),'nr','stroke-width="2.4"')+HT(X(9)+20,Y(4)-12,'C<tspan font-size="70%" dy="4">x</tspan><tspan dy="-4"> = ${H}</tspan>','nr','start')}</g>`
+ return g.s+`<g ${at(1)}>${HA(X(9)+60,Y(4),X(9)+6,Y(4),'nr','stroke-width="2.4"')+HT(X(9)+20,Y(4)-12,`C<tspan font-size="70%" dy="4">x</tspan><tspan dy="-4"> = ${H}</tspan>`,'nr','start')}</g>`
   +`<g ${at(2)}>${HA(X(0),Y(0)+80,X(0),Y(0)+26,'nr','stroke-width="2.4"')+HT(X(0)+8,Y(0)+80,`A<tspan font-size="70%" dy="4">y</tspan><tspan dy="-4"> = ${Ay}</tspan>`,'nr','start')}</g>`
   +`<g ${at(3)}>${HA(X(9),Y(4)+80,X(9),Y(4)+24,'nr','stroke-width="2.4"')+HT(X(9)+8,Y(4)+84,`C<tspan font-size="70%" dy="4">y</tspan><tspan dy="-4"> = ${Cy}</tspan>`,'nr','start')}</g>`}
 function floorSim(plan,trib,b1,b2,txt){let s=emb(plan.replace(/<\/svg>$/,`<g ${at(4)}>${trib}</g></svg>`),0,30,460,450);
