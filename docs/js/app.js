@@ -4057,11 +4057,7 @@ function examsHome(){
   html+=`<section><h2 style="font-size:1.25rem;margin-top:22px">${XEX[k]}</h2><div class="grid">${L.map(x=>`<a class="card xcard" href="#xm${x.id}"><div class="thumb" style="background-image:url('${XIMG[x.q[x.q.length-1]]}');background-size:contain;background-repeat:no-repeat;background-position:center;background-color:#fff"></div><div class="body"><span class="no">${xmNo(x)}</span><h3>${x.title}</h3><p>${x.short}</p></div></a>`).join('')}</div></section>`}
  app.classList.remove('wide');app.innerHTML=html;window.scrollTo(0,0)}
 function xTile(key,num,title,base,body){return `<section class="zt" data-t="${key}"><header class="zh" title="اسحب من هنا لتحريك الجزء"><b><span class="grip" aria-hidden="true">⠿</span>${num?`<span class="wt">${num}</span>`:''}${title}</b><div class="zc"><button data-zt="out" aria-label="تصغير الجزء">−</button><span class="zp">100%</span><button data-zt="in" aria-label="تكبير الجزء">+</button><button data-zt="reset" aria-label="المقاس الأصلي">↺</button></div></header><div class="zi" style="width:${base}px" data-base="${base}">${body}</div><span class="rz" title="اسحب لفوق: شريط بالعرض — لتحت: بالطول" aria-label="تغيير الشكل"></span></section>`}
-function solCanvas(bands,W=1600){const GAP=110,band=(b,k,w)=>`<div class="fband${b.wide?' wide':''}" data-g="${k}" style="width:${w}px"><div class="fpt" title="اسحب العنوان يتحرك الجزء كامل">${b.n?`<span>${b.n}</span>`:''}${b.t}</div>${b.h.replace(/^<div class="nbp">/,'<div class="nbx">')}</div>`;
- /* rows of up to 3 parts side by side; a "wide" part (the steps) takes its own row and lays its steps out in 3 columns */
- const rows=[];let cur=[];bands.forEach((b,k)=>{if(b.wide){if(cur.length)rows.push(cur);cur=[];rows.push([[b,k]])}else{cur.push([b,k]);if(cur.length===3){rows.push(cur);cur=[]}}});if(cur.length)rows.push(cur);
- const rw=r=>r.reduce((a,[b])=>a+(b.w||W),0)+GAP*(r.length-1),full=Math.max(2400,...rows.filter(r=>!r[0][0].wide).map(rw));
- return `<div class="fcv" id="fcv"><div class="fcc nbp" id="fcc"><div class="fflow fgrid">${rows.map(r=>`<div class="frow">${r.map(([b,k])=>band(b,k,b.wide?full:(b.w||W))).join('')}</div>`).join('')}</div></div>
+function solCanvas(bands,W=1600){return `<div class="fcv" id="fcv"><div class="fcc nbp" id="fcc"><div class="fflow">${bands.map((b,k)=>`<div class="fband" data-g="${k}"><div class="fpt">${b.n?`<span>${b.n}</span>`:''}${b.t}</div>${b.h.replace(/^<div class="nbp">/,'<div class="nbx">')}</div>`).join('')}</div></div>
    <div class="wb-ui wb-zoom fcbar"><button data-fc="out" aria-label="تصغير">−</button><span id="fcp">100%</span><button data-fc="in" aria-label="تكبير">+</button><button data-fc="fit" aria-label="كل الصفحة">⊡</button><button data-fc="reset" class="arr" aria-label="رجّع الترتيب">ترتيب</button><button data-fc="full" aria-label="ملء الشاشة">⤢</button></div></div>`}
 const SOLHINT=`<p class="fchint">اسحب العنوان الأحمر يتحرك الجزء كامل · اسحب أي سطر أو رسمة يتحرك لحاله · النقطة الخضراء تكبّر وتصغّر · إصبعين للتكبير</p>`;
 /* exam simulation: the solution is written line by line next to its drawing */
@@ -4095,6 +4091,25 @@ function examPage(id){const x=XM.find(e=>e.id===id);if(!x){location.hash='#exams
   <h3 class="sec-title">الحل</h3>${SOLHINT}${solCanvas(bands)}
   <nav class="nav"><a class="navb" ${prev?`href="#xm${prev.id}"`:'aria-disabled="true"'}>→ ${prev?prev.title:'السابق'}</a><a class="navb" ${next?`href="#xm${next.id}"`:'aria-disabled="true"'}>${next?next.title:'التالي'} ←</a></nav>`;
  window.scrollTo(0,0);SE=xPseudo(x);simStop();simSet(0);applyStatics();FC.init('xm'+id)}
+/* solution layout: every part is cut into boxes of the same width (a long part continues in the next box),
+   then the boxes sit in a grid of 3 or 4 columns, read right to left */
+function packCells(flow){const CW=1150,MAXH=1700,GAP=34;
+ const meas=document.createElement('div');meas.className='fmeas';meas.style.width=CW+'px';flow.appendChild(meas);
+ const cells=[];let gi=0;
+ const newCell=(title,num,cont)=>{const c=document.createElement('div');c.className='fcell';c.dataset.g='c'+(gi++);
+  if(title){const t=document.createElement('div');t.className='fpt';t.innerHTML=(num?`<span>${num}</span>`:'')+title+(cont?' <small>(تابع)</small>':'');c.appendChild(t)}
+  meas.appendChild(c);cells.push(c);return c};
+ [...flow.querySelectorAll('.fband')].forEach(bd=>{const tEl=bd.querySelector('.fpt'),num=tEl&&tEl.querySelector('span')?tEl.querySelector('span').textContent:'',title=tEl?tEl.innerHTML.replace(/<span>[^<]*<\/span>/,''):'';
+  // reading order: each page's figure first, then its lines
+  const units=[...bd.querySelectorAll('.nbl > *, .nbr > *, .nb1 > *, .sgrid > *')].filter(u=>u.offsetParent!==null||u.getClientRects().length);
+  const key=u=>{const g=u.closest('.nbg');return g?[[...bd.querySelectorAll('.nbg')].indexOf(g),u.parentElement.classList.contains('nbr')?0:1]:[-1,1]};
+  const ord=units.map((u,i)=>[u,key(u),i]).sort((a,b)=>{const ga=a[1][0]<0?a[2]:a[1][0],gb=b[1][0]<0?b[2]:b[1][0];return (a[1][0]<0||b[1][0]<0)?a[2]-b[2]:(ga-gb)||(a[1][1]-b[1][1])||(a[2]-b[2])}).map(x=>x[0]);
+  let cell=newCell(title,num,false),n=0;
+  ord.forEach(u=>{cell.appendChild(u);n++;if(cell.offsetHeight>MAXH&&n>1){cell.removeChild(u);cell=newCell(title,num,true);cell.appendChild(u);n=1}});
+  bd.remove()});
+ const C=cells.length<=3?Math.max(1,cells.length):cells.length<=6?3:4;
+ const grid=document.createElement('div');grid.className='fgrid2';grid.style.gridTemplateColumns=`repeat(${C},${CW}px)`;grid.style.gap=GAP+'px';
+ cells.forEach(c=>grid.appendChild(c));flow.innerHTML='';flow.appendChild(grid)}
 /* ===== free canvas: every element is draggable, no cards ===== */
 const FC={s:1,x:0,y:0,z:10,key:'',
  el:()=>document.getElementById('fcv'),cv:()=>document.getElementById('fcc'),
@@ -4102,13 +4117,13 @@ const FC={s:1,x:0,y:0,z:10,key:'',
  zoomAt(f,cx,cy){const ns=Math.min(4,Math.max(0.08,this.s*f));this.x=cx-(cx-this.x)*ns/this.s;this.y=cy-(cy-this.y)*ns/this.s;this.s=ns;this.apply()},
  bounds(){let X0=1e9,Y0=1e9,X1=-1e9,Y1=-1e9;this.cv().querySelectorAll('.fi').forEach(e=>{const x=parseFloat(e.style.left),y=parseFloat(e.style.top),k=+e.dataset.k||1;X0=Math.min(X0,x);Y0=Math.min(Y0,y);X1=Math.max(X1,x+e.offsetWidth*k);Y1=Math.max(Y1,y+e.offsetHeight*k)});return{X0,Y0,X1,Y1}},
  fit(){const v=this.el(),b=this.bounds();if(b.X1<b.X0)return;const s=Math.min(v.clientWidth/(b.X1-b.X0+40),v.clientHeight/(b.Y1-b.Y0+40),1.2);this.s=s;this.x=(v.clientWidth-(b.X1-b.X0)*s)/2-b.X0*s;this.y=(v.clientHeight-(b.Y1-b.Y0)*s)/2-b.Y0*s;this.apply()},
- save(){try{const d={};this.cv().querySelectorAll('.fi').forEach(e=>d[e.dataset.i]=[parseFloat(e.style.left),parseFloat(e.style.top),+e.dataset.k||1]);localStorage.setItem('ce360-fc3-'+this.key,JSON.stringify(d))}catch(_){}},
- load(){try{return JSON.parse(localStorage.getItem('ce360-fc3-'+this.key)||'null')}catch(_){return null}},
+ save(){try{const d={};this.cv().querySelectorAll('.fi').forEach(e=>d[e.dataset.i]=[parseFloat(e.style.left),parseFloat(e.style.top),+e.dataset.k||1]);localStorage.setItem('ce360-fc4-'+this.key,JSON.stringify(d))}catch(_){}},
+ load(){try{return JSON.parse(localStorage.getItem('ce360-fc4-'+this.key)||'null')}catch(_){return null}},
  setK(e,k){e.dataset.k=k;e.style.transform=k===1?'':`scale(${k})`},
  explode(saved){const c=this.cv(),flow=c.querySelector('.fflow');const cr=c.getBoundingClientRect();
-  flow.querySelectorAll('.nbl > svg, .nbr > svg, .nb1 > svg').forEach(sv=>{const d=document.createElement('div');d.className='fsv';sv.parentNode.insertBefore(d,sv);d.appendChild(sv)});const sel='.fband > .fpt, .fband .nbl > *, .fband .nbr > *, .fband .nb1 > *, .fband .sgrid > *';const items=[...flow.querySelectorAll(sel)].filter(e=>!(e.classList.contains('fpt')&&!e.textContent.trim()));
+  flow.querySelectorAll('.nbl > svg, .nbr > svg, .nb1 > svg').forEach(sv=>{const d=document.createElement('div');d.className='fsv';sv.parentNode.insertBefore(d,sv);d.appendChild(sv)});packCells(flow);const sel='.fcell > *';const items=[...flow.querySelectorAll(sel)].filter(e=>!(e.classList.contains('fpt')&&!e.textContent.trim()));
   const pos=items.map(e=>{const r=e.getBoundingClientRect();return[e,(r.left-cr.left)/this.s+60,(r.top-cr.top)/this.s+60,r.width/this.s]});
-  pos.forEach(([e,x,y,w],n)=>{const bd=e.closest('.fband');e.dataset.g=bd?bd.dataset.g:'x';e.classList.add('fi');e.dataset.i=n;e.style.width=w+'px';const sv=saved&&saved[n];e.style.left=(sv?sv[0]:x)+'px';e.style.top=(sv?sv[1]:y)+'px';this.setK(e,sv?sv[2]:1);const d=document.createElement('span');d.className='fz';d.title='اسحب لتكبير أو تصغير — ضغطتين يرجّع المقاس';e.appendChild(d);c.appendChild(e)});
+  pos.forEach(([e,x,y,w],n)=>{const bd=e.closest('.fcell');e.dataset.g=bd?bd.dataset.g:'x';e.classList.add('fi');e.dataset.i=n;e.style.width=w+'px';const sv=saved&&saved[n];e.style.left=(sv?sv[0]:x)+'px';e.style.top=(sv?sv[1]:y)+'px';this.setK(e,sv?sv[2]:1);const d=document.createElement('span');d.className='fz';d.title='اسحب لتكبير أو تصغير — ضغطتين يرجّع المقاس';e.appendChild(d);c.appendChild(e)});
   flow.remove();this.size()},
  size(){const b=this.bounds(),c=this.cv();c.style.width=Math.max(3000,b.X1+1200)+'px';c.style.height=Math.max(2200,b.Y1+1200)+'px'},
  init(key){const v=this.el();if(!v)return;this.key=key;this.orig=this.cv().innerHTML;this.s=1;this.x=0;this.y=0;this.apply();
@@ -4134,7 +4149,7 @@ const FC={s:1,x:0,y:0,z:10,key:'',
   v.querySelector('.fcbar').addEventListener('click',ev=>{const b=ev.target.closest('[data-fc]');if(!b)return;const a=b.dataset.fc;
    if(a==='in'||a==='out')this.zoomAt(a==='in'?1.25:0.8,v.clientWidth/2,v.clientHeight/2);
    else if(a==='fit')this.fit();
-   else if(a==='reset'){try{localStorage.removeItem('ce360-fc3-'+this.key)}catch(_){}const c=this.cv(),sy=window.scrollY;this.s=1;this.x=0;this.y=0;this.apply();c.innerHTML=this.orig;c.style.width='';c.style.height='';try{c.querySelectorAll('[data-state]').forEach(el=>applyState(el,+el.dataset.state,!!el.dataset.sh))}catch(_){}requestAnimationFrame(()=>{this.explode(null);this.fit();window.scrollTo(0,sy)})}
+   else if(a==='reset'){try{localStorage.removeItem('ce360-fc4-'+this.key)}catch(_){}const c=this.cv(),sy=window.scrollY;this.s=1;this.x=0;this.y=0;this.apply();c.innerHTML=this.orig;c.style.width='';c.style.height='';try{c.querySelectorAll('[data-state]').forEach(el=>applyState(el,+el.dataset.state,!!el.dataset.sh))}catch(_){}requestAnimationFrame(()=>{this.explode(null);this.fit();window.scrollTo(0,sy)})}
    else if(a==='full'){v.classList.toggle('full');document.body.classList.toggle('noscroll',v.classList.contains('full'));requestAnimationFrame(()=>this.fit())}});
  }};
 function examsStatic(){let h=`<section class="sx-top" id="exams-o"><h2 style="font-size:1.2rem;margin-bottom:6px">الاختبارات السابقة</h2><div class="sx-toc">${['472','471','462'].map(k=>`<h3>${XEX[k]}</h3>`+XM.filter(x=>x.ex===k).map(x=>`<a href="#xmo${x.id}"><span class="no">${x.no}</span>${x.title}</a>`).join('')).join('')}</div></section>`;
@@ -4152,7 +4167,7 @@ function exBands(e){const old=e.ch==='c1',SQ=old?(q=>q):sq,FG=old?(()=>''):stFig
  if(e.cases)items=e.cases.map(([im,t,d,r],k)=>`<div class="dstep"><div class="dh"><span class="wn">${k+1}</span><b>${t}</b></div>${CASE[im]?`<svg class="drw" viewBox="0 0 300 140" direction="ltr">${DEFS}${CASE[im]}</svg>`:`<img src="${IMG[im]}" alt="" draggable="false" style="max-width:100%">`}${W[k]?`<div class="di"><p>${W[k]}</p></div>`:''}<div class="di"><p>${d}</p></div><span class="wq">${r}</span></div>`);
  else if(D)items=e.steps.map(([t],k)=>`<div class="dstep${WF}"><div class="dsl"><div class="dh"><span class="wn">${k+1}</span><b>${t}</b></div><div class="dl">${(()=>{let n=0;return (D[k]||[]).map(x=>x[0]==='='?`<span class="wq">${SQ(x.slice(1))}</span>`:`<div class="di"><span class="dn">${++n}</span><p>${x}</p></div>`).join('')})()}</div></div>${old?'':`<div class="dsf">${FG(e,k)}</div>`}</div>`);
  else items=e.steps.map(([t,d,qq],k)=>`<div class="dstep${WF}"><div class="dsl"><div class="dh"><span class="wn">${k+1}</span><b>${t}</b></div>${W[k]?`<div class="di"><p>${W[k]}</p></div>`:''}${d?`<div class="di"><p class="dd">${d}</p></div>`:''}${qq?`<span class="wq">${SQ(qq)}</span>`:''}</div>${old?'':`<div class="dsf">${FG(e,k)}</div>`}</div>`);
- return [{t:'السؤال والمعطيات',w:1500,h:q},{t:'رسمة الحل',n:2,w:1300,h:nbOne(drawHTML(e,last))},{t:'الجواب والفكرة',n:3,w:1000,h:nbOne(`<div class="b-ans">${e.ans}</div><div class="wb-idea2"><b>الفكرة المهمة:</b> ${e.idea}</div>`)},{t:e.cases?'الحل — تصنيف كل حالة':'خطوات الحل مع الشرح',n:1,wide:true,h:`<div class="nbp"><div class="sgrid">${items.join('')}</div></div>`}]}
+ return [{t:'السؤال والمعطيات',h:q},{t:e.cases?'الحل — تصنيف كل حالة':'خطوات الحل مع الشرح',n:1,h:`<div class="nbp"><div class="sgrid">${items.join('')}</div></div>`},{t:'رسمة الحل',n:2,h:nbOne(drawHTML(e,last))},{t:'الجواب والفكرة',n:3,h:nbOne(`<div class="b-ans">${e.ans}</div><div class="wb-idea2"><b>الفكرة المهمة:</b> ${e.idea}</div>`)}]}
 /* ===== solutions-only export (HTML / PDF) ===== */
 function solStatic(title,meta,bands){return `<section class="solp nbp"><div class="solh"><h2>${title}</h2><span>${meta}</span></div><div class="solg">${[0,1].map(c=>`<div class="fcol">${bands.map((b,k)=>k%2!==c?'':`<div class="fband"><div class="fpt">${b.n?`<span>${b.n}</span>`:''}${b.t}</div>${b.h.replace(/^<div class="nbp">/,'<div class="nbx">')}</div>`).join('')}</div>`).join('')}</div></section>`}
 function solutionsAll(){document.documentElement.setAttribute('data-theme','light');document.documentElement.classList.add('solmode');

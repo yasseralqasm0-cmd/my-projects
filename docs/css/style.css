@@ -736,8 +736,21 @@ html.solmode .wrap{max-width:none;padding:0}
 .sgrid{grid-template-columns:repeat(auto-fill,minmax(700px,1fr))!important}
 .solg .fcol{width:1600px!important}
 
-/* solution canvas: parts in rows of 3, steps in a 3-column grid */
-.fflow.fgrid{display:flex!important;flex-direction:column!important;gap:110px!important;align-items:flex-start}
-.frow{display:flex;flex-direction:row;gap:110px;align-items:flex-start}
-.fcc .fband.wide .sgrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:50px 60px}
-.fcc .fband.wide .sgrid > .dstep{grid-column:auto!important}
+/* solution canvas: equal boxes in a 3-4 column grid, larger type */
+.fflow{display:block!important}
+.fmeas{position:absolute;left:-99999px;top:0}
+.fgrid2{display:grid;direction:rtl;align-items:start}
+.fcell{display:flex;flex-direction:column;gap:4px;min-width:0;direction:rtl}
+.fcell > *{max-width:100%}
+.fcell .fpt small{font-size:60%;color:#5e6b74}
+.fcc.nbp .nq{font-size:52px!important;line-height:76px!important}
+.fcc.nbp .eh{font-size:54px!important;line-height:78px!important}
+.fcc.nbp .nt{font-size:42px!important;line-height:1.75!important}
+.fcc.nbp .fpt{font-size:60px!important}
+.fcc.nbp .dstep .di p,.fcc.nbp .dstep .dd{font-size:42px!important}
+.fcc.nbp .dstep .dh b{font-size:46px!important}
+.fcc.nbp .dstep .wq{font-size:44px!important}
+.fcc.nbp .exq{font-size:46px!important}
+.fcc.nbp .gtab{font-size:40px!important}
+.fcc.nbp .b-ans{font-size:46px!important}
+.fcc.nbp .wb-idea2{font-size:42px!important}
