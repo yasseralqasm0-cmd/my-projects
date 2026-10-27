@@ -2,39 +2,41 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-  /* Layout: single right-to-left column, hero with a CSS-drawn eight-point star, then about / skills / projects / contact */
+  /* Layout: RTL lab-notebook portfolio. Graph-paper ground, hero with piezometer tubes drawn from Exp 1 readings, then about / CE325 experiments / courses / contact */
   :root {
-    --bg: #f2f5f5;
-    --surface: #ffffff;
-    --ink: #13292e;
-    --muted: #5a6f73;
-    --line: #d5dfe0;
-    --teal: #0f5c66;
-    --saffron: #c9821f;
-    --code-bg: #0f2a2f;
-    --code-fg: #d9ecec;
-    --font-display: "Reem Kufi", "IBM Plex Sans Arabic", system-ui, sans-serif;
+    --bg: #eef3f4;
+    --grid: #dbe5e8;
+    --surface: #fbfdfd;
+    --ink: #142b33;
+    --muted: #57707a;
+    --line: #cfdcdf;
+    --water: #1d6f8c;
+    --water-soft: #d6e9ef;
+    --pencil: #b4472f;
+    --result: #3f7a46;
+    --result-soft: #e1eedf;
+    --font-display: "Readex Pro", "IBM Plex Sans Arabic", system-ui, sans-serif;
     --font-body: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, system-ui, sans-serif;
     --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
     --step--1: 0.875rem;
     --step-0: 1.0625rem;
-    --step-1: 1.375rem;
-    --step-2: 1.875rem;
-    --step-3: clamp(2.5rem, 6vw + 1rem, 4.25rem);
+    --step-1: 1.3rem;
+    --step-2: 1.8rem;
+    --step-3: clamp(2.3rem, 5vw + 1rem, 3.9rem);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #0c1a1d; --surface: #12262a; --ink: #e4eeee; --muted: #93a9ac;
-      --line: #22393d; --teal: #4fb3bf; --saffron: #e6a54a;
-      --code-bg: #081215; --code-fg: #d9ecec; color-scheme: dark;
+      --bg: #0b171b; --grid: #13252b; --surface: #10222a; --ink: #e2eef1; --muted: #8fa9b2;
+      --line: #20373f; --water: #5bb6d4; --water-soft: #143846; --pencil: #e2795f;
+      --result: #86c48d; --result-soft: #18331d; color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #0c1a1d; --surface: #12262a; --ink: #e4eeee; --muted: #93a9ac;
-    --line: #22393d; --teal: #4fb3bf; --saffron: #e6a54a;
-    --code-bg: #081215; --code-fg: #d9ecec; color-scheme: dark;
+    --bg: #0b171b; --grid: #13252b; --surface: #10222a; --ink: #e2eef1; --muted: #8fa9b2;
+    --line: #20373f; --water: #5bb6d4; --water-soft: #143846; --pencil: #e2795f;
+    --result: #86c48d; --result-soft: #18331d; color-scheme: dark;
   }
 
   * { box-sizing: border-box; }
@@ -42,7 +44,11 @@
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { animation: none !important; transition: none !important; } }
 
   body {
-    background: var(--bg);
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 24px 24px;
     color: var(--ink);
     font-family: var(--font-body);
     font-size: var(--step-0);
@@ -54,130 +60,160 @@
     padding-left: max(16px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
   }
-  a { color: var(--teal); text-underline-offset: 0.25em; }
-  a:focus-visible { outline: 2px solid var(--saffron); outline-offset: 3px; border-radius: 2px; }
-  h1, h2, h3 { font-family: var(--font-display); line-height: 1.25; margin: 0; text-wrap: balance; }
+  a { color: var(--water); text-underline-offset: 0.25em; }
+  a:focus-visible { outline: 2px solid var(--pencil); outline-offset: 3px; border-radius: 2px; }
+  h1, h2, h3 { font-family: var(--font-display); line-height: 1.3; margin: 0; text-wrap: balance; }
   p { margin: 0; }
+  .ltr { direction: ltr; unicode-bidi: isolate; }
+  .mono { font-family: var(--font-mono); }
 
   /* Header */
-  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
   header.site {
     position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
-    background: color-mix(in srgb, var(--bg) 88%, transparent);
-    backdrop-filter: blur(8px);
+    background: var(--surface);
     border-bottom: 1px solid var(--line);
   }
-  header.site .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 0.85rem; flex-wrap: wrap; }
-  .brand { font-family: var(--font-display); font-size: var(--step-1); color: var(--ink); text-decoration: none; }
-  .brand span { color: var(--saffron); }
-  nav ul { display: flex; gap: 1.25rem; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
+  header.site .wrap { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; padding-block: 0.8rem; flex-wrap: wrap; }
+  .brand { font-family: var(--font-display); font-weight: 700; font-size: var(--step-1); color: var(--ink); text-decoration: none; }
+  .brand small { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 400; color: var(--water); margin-inline-start: 0.4rem; }
+  nav ul { display: flex; gap: 1.1rem; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
   nav a { color: var(--muted); text-decoration: none; font-weight: 500; font-size: var(--step--1); }
-  nav a:hover { color: var(--teal); }
+  nav a:hover { color: var(--water); }
 
   /* Hero */
-  .hero .wrap { display: grid; grid-template-columns: 1.3fr 1fr; gap: 3rem; align-items: center; padding-block: 4.5rem 4rem; }
-  .eyebrow { font-family: var(--font-mono); font-size: var(--step--1); color: var(--saffron); letter-spacing: 0.04em; direction: ltr; text-align: right; }
-  .hero h1 { font-size: var(--step-3); margin-block: 0.5rem 1rem; }
-  .hero h1 em { font-style: normal; color: var(--teal); }
-  .hero .lede { color: var(--muted); max-width: 34rem; font-size: 1.125rem; }
-  .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 2rem; }
+  .hero .wrap { display: grid; grid-template-columns: 1.25fr 1fr; gap: 3rem; align-items: center; padding-block: 4rem 3.5rem; }
+  .eyebrow { font-family: var(--font-mono); font-size: var(--step--1); color: var(--pencil); letter-spacing: 0.06em; text-transform: uppercase; }
+  .hero h1 { font-size: var(--step-3); margin-block: 0.4rem 1rem; }
+  .hero h1 em { font-style: normal; color: var(--water); }
+  .hero .lede { color: var(--muted); max-width: 36rem; font-size: 1.125rem; }
+  .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.8rem; }
   .btn {
-    display: inline-block; padding: 0.7rem 1.4rem; border-radius: 999px;
-    font-weight: 600; text-decoration: none; border: 1.5px solid var(--teal);
+    display: inline-block; padding: 0.7rem 1.35rem; border-radius: 8px;
+    font-weight: 600; text-decoration: none; border: 1.5px solid var(--water);
     transition: background-color .2s, color .2s;
   }
-  .btn.primary { background: var(--teal); color: var(--bg); }
-  .btn.primary:hover { background: transparent; color: var(--teal); }
-  .btn.ghost { color: var(--teal); }
-  .btn.ghost:hover { background: var(--teal); color: var(--bg); }
+  .btn.primary { background: var(--water); color: var(--surface); }
+  .btn.primary:hover { background: transparent; color: var(--water); }
+  .btn.ghost { color: var(--water); background: var(--surface); }
+  .btn.ghost:hover { background: var(--water); color: var(--surface); }
 
-  /* Eight-point star (khatam) built from two squares */
-  .star-box { position: relative; aspect-ratio: 1; max-width: 100%; width: min(22rem, 100%); justify-self: center; }
-  .star-box .sq {
-    position: absolute; inset: 14%;
-    border: 2px solid var(--teal);
-    background: color-mix(in srgb, var(--teal) 7%, transparent);
+  /* Piezometer figure: heights = readings from Exp 1 (0.250 m → 160px scale) */
+  .rig {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 1.1rem 1.1rem 0.9rem; max-width: 100%;
   }
-  .star-box .sq.b { transform: rotate(45deg); border-color: var(--saffron); background: color-mix(in srgb, var(--saffron) 7%, transparent); animation: turn 40s linear infinite; }
-  .star-box .core {
-    position: absolute; inset: 31%; display: grid; place-items: center;
-    border-radius: 50%; background: var(--surface); border: 1px solid var(--line);
-    font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); direction: ltr; text-align: center; line-height: 1.5;
+  .rig-head { display: flex; justify-content: space-between; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); }
+  .tubes {
+    direction: ltr; position: relative;
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.6rem;
+    align-items: end; height: 180px; margin-top: 0.75rem;
+    border-bottom: 2px solid var(--ink);
   }
-  .star-box .core b { display: block; font-family: var(--font-display); color: var(--ink); font-size: 1.6rem; font-weight: 700; }
-  @keyframes turn { to { transform: rotate(405deg); } }
+  .tubes::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 18px;
+    border-top: 1.5px dashed var(--pencil);
+  }
+  .tube { position: relative; height: 100%; display: flex; justify-content: center; align-items: flex-end; }
+  .tube::before {
+    content: ""; position: absolute; bottom: 0; width: 14px; height: 100%;
+    border: 1.5px solid var(--line); border-bottom: 0; border-radius: 7px 7px 0 0;
+  }
+  .tube i {
+    display: block; width: 11px; border-radius: 5px 5px 0 0;
+    background: var(--water); height: var(--h);
+    animation: fill 1.2s ease-out both;
+  }
+  .tube b {
+    position: absolute; bottom: calc(var(--h) + 4px);
+    font-family: var(--font-mono); font-size: 0.66rem; font-weight: 500; color: var(--ink);
+    background: var(--surface); padding-inline: 2px;
+  }
+  @keyframes fill { from { height: 8px; } }
+  .labels { direction: ltr; display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.6rem; text-align: center; font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); margin-top: 0.35rem; }
+  .rig-cap { font-size: var(--step--1); color: var(--muted); margin-top: 0.6rem; }
+  .rig-cap span { color: var(--pencil); }
 
   /* Sections */
-  section.block { border-top: 1px solid var(--line); }
-  section.block > .wrap { padding-block: 4rem; display: grid; grid-template-columns: 14rem 1fr; gap: 2.5rem; }
+  section.block > .wrap { padding-block: 3.5rem; }
+  .block-head { display: flex; justify-content: space-between; align-items: end; gap: 0.5rem 1.5rem; flex-wrap: wrap; margin-bottom: 1.75rem; border-bottom: 2px solid var(--ink); padding-bottom: 0.75rem; }
   .block h2 { font-size: var(--step-2); }
-  .block .label { font-family: var(--font-mono); font-size: var(--step--1); color: var(--muted); direction: ltr; text-align: right; margin-top: 0.35rem; }
-  .content { min-width: 0; display: grid; gap: 1.25rem; }
-  .content p { max-width: 62ch; }
+  .block-head .tag { font-family: var(--font-mono); font-size: var(--step--1); color: var(--muted); }
 
-  /* Code card */
-  pre.code {
-    margin: 0; overflow-x: auto; direction: ltr; text-align: left;
-    background: var(--code-bg); color: var(--code-fg);
-    border-radius: 10px; padding: 1.25rem 1.5rem;
-    font-family: var(--font-mono); font-size: 0.9rem; line-height: 1.7;
-  }
-  .code .sel { color: #f0b765; } .code .prop { color: #7fd3dc; } .code .val { color: #b9e3a4; } .code .cm { color: #6f8e92; }
+  /* About */
+  .about { display: grid; grid-template-columns: 1.4fr 1fr; gap: 2.5rem; }
+  .about > div { min-width: 0; display: grid; gap: 1rem; align-content: start; }
+  .about p { max-width: 62ch; }
+  .facts { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+  .facts li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.75rem 1.1rem; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .facts li:last-child { border-bottom: 0; }
+  .facts span { color: var(--muted); }
+  .facts b { font-weight: 600; }
 
-  /* Skills */
-  .skills { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; }
-  .skill { padding-block: 0.5rem; }
-  .skill h3 { font-size: var(--step-1); display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
-  .skill h3 small { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); font-weight: 400; }
-  .skill p { color: var(--muted); font-size: var(--step--1); margin-top: 0.25rem; }
-  .meter { height: 6px; border-radius: 3px; background: var(--line); margin-top: 0.75rem; overflow: hidden; }
-  .meter i { display: block; height: 100%; background: var(--teal); border-radius: inherit; }
-
-  /* Projects */
-  .projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1.25rem; }
-  .project {
+  /* Experiments */
+  .exps { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); gap: 1.1rem; }
+  .exp {
     background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
-    padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;
+    padding: 1.3rem 1.3rem 1.1rem; display: flex; flex-direction: column; gap: 0.7rem; min-width: 0;
     transition: border-color .2s, transform .2s;
   }
-  .project:hover { border-color: var(--teal); transform: translateY(-2px); }
-  .project h3 { font-size: var(--step-1); }
-  .project p { color: var(--muted); font-size: var(--step--1); flex: 1; }
-  .tags { display: flex; gap: 0.4rem; flex-wrap: wrap; list-style: none; padding: 0; margin: 0; }
-  .tags li {
-    font-family: var(--font-mono); font-size: 0.75rem; direction: ltr;
-    padding: 0.15rem 0.6rem; border-radius: 999px;
-    color: var(--teal); background: color-mix(in srgb, var(--teal) 10%, transparent);
+  .exp:hover { border-color: var(--water); transform: translateY(-2px); }
+  .exp-top { display: flex; align-items: center; gap: 0.75rem; }
+  .exp-no {
+    flex: none; width: 2.4rem; height: 2.4rem; border-radius: 8px; display: grid; place-items: center;
+    background: var(--water-soft); color: var(--water); font-family: var(--font-mono); font-weight: 500;
   }
-  .status { font-size: 0.8rem; font-weight: 600; color: var(--saffron); }
+  .exp h3 { font-size: 1.12rem; }
+  .exp .en { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); direction: ltr; text-align: right; line-height: 1.5; }
+  .exp > p { color: var(--muted); font-size: var(--step--1); flex: 1; }
+  .formula {
+    direction: ltr; text-align: center; font-family: var(--font-mono); font-size: 0.92rem;
+    background: var(--water-soft); color: var(--ink); border-radius: 8px; padding: 0.5rem 0.75rem; overflow-x: auto;
+  }
+  .formula sub, .formula sup { font-size: 0.7em; }
+  .result {
+    background: var(--result-soft); border-radius: 8px; padding: 0.55rem 0.8rem;
+    font-size: var(--step--1); display: grid; gap: 0.1rem;
+  }
+  .result small { color: var(--result); font-weight: 600; font-size: 0.75rem; }
+  .result span { font-family: var(--font-mono); direction: ltr; text-align: right; font-size: 0.85rem; }
+  .guide-link { margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; background: var(--surface); border: 1px dashed var(--water); border-radius: 12px; padding: 1rem 1.25rem; }
+  .guide-link p { color: var(--muted); font-size: var(--step--1); }
+  .guide-link strong { color: var(--ink); display: block; font-size: var(--step-0); }
+
+  /* Courses */
+  .courses { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr)); gap: 0.8rem; }
+  .courses li { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 0.9rem 1rem; display: grid; gap: 0.15rem; }
+  .courses .code { font-family: var(--font-mono); font-size: 0.8rem; color: var(--water); direction: ltr; text-align: right; }
+  .courses .now { color: var(--pencil); }
 
   /* Contact */
-  .contact-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; }
-  .contact-list li { display: flex; justify-content: space-between; gap: 1rem; padding-block: 0.9rem; border-bottom: 1px dashed var(--line); flex-wrap: wrap; }
-  .contact-list li span { color: var(--muted); }
-  .contact-list a { direction: ltr; font-family: var(--font-mono); font-size: 0.95rem; word-break: break-all; }
+  .contact { display: grid; gap: 1rem; max-width: 40rem; }
+  .contact-list { list-style: none; padding: 0; margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+  .contact-list li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.85rem 1.1rem; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .contact-list li:last-child { border-bottom: 0; }
+  .contact-list span { color: var(--muted); }
+  .contact-list a { direction: ltr; font-family: var(--font-mono); font-size: 0.9rem; word-break: break-all; }
 
-  footer { border-top: 1px solid var(--line); }
-  footer .wrap { padding-block: 2rem; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; color: var(--muted); font-size: var(--step--1); }
-  footer code { font-family: var(--font-mono); direction: ltr; unicode-bidi: isolate; }
+  footer { background: var(--surface); border-top: 1px solid var(--line); }
+  footer .wrap { padding-block: 1.6rem; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; color: var(--muted); font-size: var(--step--1); }
 
-  @media (max-width: 760px) {
-    .hero .wrap { grid-template-columns: 1fr; padding-block: 3rem; gap: 2rem; }
-    .star-box { width: min(15rem, 80%); order: -1; }
-    section.block > .wrap { grid-template-columns: 1fr; gap: 1.25rem; padding-block: 3rem; }
-    nav ul { gap: 0.9rem; }
+  @media (max-width: 800px) {
+    .hero .wrap { grid-template-columns: 1fr; padding-block: 2.75rem; gap: 2rem; }
+    .about { grid-template-columns: 1fr; gap: 1.5rem; }
+    nav ul { gap: 0.85rem; }
   }
 </style>
 
 <div dir="rtl" lang="ar">
   <header class="site">
     <div class="wrap">
-      <a class="brand" href="#top">ياسر<span>.</span></a>
+      <a class="brand" href="#top">ياسر القاسم<small>CE</small></a>
       <nav aria-label="التنقل الرئيسي">
         <ul>
           <li><a href="#about">عنّي</a></li>
-          <li><a href="#skills">المهارات</a></li>
-          <li><a href="#projects">المشاريع</a></li>
+          <li><a href="#lab">مختبر CE325</a></li>
+          <li><a href="#courses">المقررات</a></li>
           <li><a href="#contact">تواصل</a></li>
         </ul>
       </nav>
@@ -188,117 +224,119 @@
     <section class="hero">
       <div class="wrap">
         <div>
-          <p class="eyebrow">&lt;html dir="rtl" lang="ar"&gt;</p>
-          <h1>مرحبًا، أنا <em>ياسر القاسم</em><br>أبني صفحات ويب بالعربية</h1>
-          <p class="lede">مطوّر واجهات أتعلّم وأبني باستخدام HTML وCSS. أهتم بأن تكون الصفحة سريعة، واضحة، وتعمل من اليمين إلى اليسار كما ينبغي على كل الشاشات.</p>
+          <p class="eyebrow ltr">Civil Engineering · Hydraulics Lab</p>
+          <h1>أنا <em>ياسر القاسم</em><br>طالب هندسة مدنية</h1>
+          <p class="lede">أدرس الهيدروليكا وميكانيكا الموائع والتحليل الإنشائي. هنا أعرض شغلي في مختبر الهيدروليكا CE325: ست تجارب، لكل واحدة هدفها ومعادلتها الأساسية ونتيجة محسوبة من مسألة محلولة.</p>
           <div class="actions">
-            <a class="btn primary" href="#projects">شاهد مشاريعي</a>
-            <a class="btn ghost" href="#contact">تواصل معي</a>
+            <a class="btn primary" href="#lab">التجارب الست</a>
+            <a class="btn ghost" href="https://claude.ai/artifact/Mav5sJtDyCXH2wTtf8z4vU">الدليل الكامل</a>
           </div>
         </div>
-        <div class="star-box" aria-hidden="true">
-          <div class="sq a"></div>
-          <div class="sq b"></div>
-          <div class="core"><div><b>٨</b>HTML · CSS</div></div>
-        </div>
+
+        <figure class="rig" aria-label="قراءات البيزومتر في تجربة برنولي">
+          <div class="rig-head"><span>Exp 1 · Bernoulli</span><span>P/γ + z (m)</span></div>
+          <div class="tubes">
+            <div class="tube" style="--h: 160px"><i></i><b>0.250</b></div>
+            <div class="tube" style="--h: 141px"><i></i><b>0.220</b></div>
+            <div class="tube" style="--h: 122px"><i></i><b>0.190</b></div>
+            <div class="tube" style="--h: 102px"><i></i><b>0.159</b></div>
+            <div class="tube" style="--h: 83px"><i></i><b>0.130</b></div>
+            <div class="tube" style="--h: 154px"><i></i><b>0.240</b></div>
+          </div>
+          <div class="labels"><span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span>F</span></div>
+          <figcaption class="rig-cap">الماء ينزل عند الحلق E لأن السرعة تزيد، و<span>خط الطاقة المتقطع</span> يبقى ثابتًا تقريبًا: من 0.253 إلى 0.243 m.</figcaption>
+        </figure>
       </div>
     </section>
 
     <section class="block" id="about">
       <div class="wrap">
-        <div>
-          <h2>عنّي</h2>
-          <p class="label">about.css</p>
-        </div>
-        <div class="content">
-          <p>بدأت رحلتي مع الويب بفضول بسيط: كيف تتحول بضعة أسطر من الوسوم إلى صفحة يراها الناس؟ اليوم أكتب واجهات من الصفر، وأجمع مشاريعي في مستودع واحد على GitHub لأتابع تقدمي.</p>
-          <p>أحب التفاصيل الصغيرة التي تصنع الفرق: محاذاة صحيحة للنص العربي، خطوط مقروءة، وتصميم يتكيّف مع الجوال قبل الحاسوب.</p>
-          <pre class="code"><span class="cm">/* هكذا أبدأ كل صفحة */</span>
-<span class="sel">.ياسر</span> {
-  <span class="prop">direction</span>: <span class="val">rtl</span>;
-  <span class="prop">font-family</span>: <span class="val">"IBM Plex Sans Arabic"</span>;
-  <span class="prop">display</span>: <span class="val">grid</span>;
-  <span class="prop">gap</span>: <span class="val">clamp(1rem, 3vw, 2rem)</span>;
-}</pre>
+        <div class="block-head"><h2>عنّي</h2><span class="tag ltr">about</span></div>
+        <div class="about">
+          <div>
+            <p>أدرس الهندسة المدنية، وأكثر ما يشدّني هو الماء: كيف يتحرك في الأنابيب، وكيف نقيسه، وكيف نتحكم فيه. في المختبر أحب اللحظة اللي تطابق فيها القراءة العملية الرقم النظري، وأحب أكثر لما ما تتطابق وأعرف السبب.</p>
+            <p>أكتب ملخصاتي وحلولي بنفسي وأحوّلها لصفحات مرتبة: معادلة واضحة، تعويض خطوة بخطوة، وجواب واحد في النهاية. هذا الموقع جزء من هذي العادة.</p>
+          </div>
+          <ul class="facts">
+            <li><span>التخصص</span><b>هندسة مدنية</b></li>
+            <li><span>المقرر المعروض</span><b class="ltr">CE 325</b></li>
+            <li><span>عدد التجارب</span><b>٦ تجارب</b></li>
+            <li><span>الاهتمام</span><b>الهيدروليكا</b></li>
+          </ul>
         </div>
       </div>
     </section>
 
-    <section class="block" id="skills">
+    <section class="block" id="lab">
       <div class="wrap">
-        <div>
-          <h2>المهارات</h2>
-          <p class="label">skills.css</p>
+        <div class="block-head"><h2>مختبر الهيدروليكا</h2><span class="tag ltr">CE 325 · Experiments 1–6</span></div>
+        <div class="exps">
+          <article class="exp">
+            <div class="exp-top"><span class="exp-no">1</span><div><h3>تحقيق معادلة برنولي</h3><p class="en">Verification of Bernoulli's Equation</p></div></div>
+            <p>نتحقق أن الطاقة الكلية للماء تبقى تقريبًا ثابتة وهو يمر في أنبوب يضيق ثم يتسع.</p>
+            <div class="formula">H = (P/γ + z) + V²/2g</div>
+            <div class="result"><small>النتيجة</small><span>H: 0.253 → 0.243 m · H<sub>L</sub> = 0.010 m</span></div>
+          </article>
+          <article class="exp">
+            <div class="exp-top"><span class="exp-no">2</span><div><h3>فقد الطاقة في الأنابيب والوصلات</h3><p class="en">Loss of Energy in Pipes &amp; Fittings</p></div></div>
+            <p>نقيس الطاقة الضائعة بالاحتكاك في أنبوب مستقيم وفي الوصلات، ونحسب معامل الاحتكاك f ومعامل الفقد K.</p>
+            <div class="formula">h<sub>f</sub> = f · (L/d) · V²/2g</div>
+            <div class="result"><small>النتيجة</small><span>f = 0.0400 (Blasius 0.0384) · Re = 4564</span></div>
+          </article>
+          <article class="exp">
+            <div class="exp-top"><span class="exp-no">3</span><div><h3>التدفق خلال فتحة صغيرة</h3><p class="en">Flow Through a Small Orifice</p></div></div>
+            <p>نوجد ثلاثة معاملات لفتحة صغيرة: Cv للسرعة، وCc للانقباض، وCd للتصريف.</p>
+            <div class="formula">C<sub>d</sub> = C<sub>c</sub> × C<sub>v</sub></div>
+            <div class="result"><small>النتيجة</small><span>Cd = 0.619 · Cv = 0.970 · Cc = 0.638</span></div>
+          </article>
+          <article class="exp">
+            <div class="exp-top"><span class="exp-no">4</span><div><h3>التدفق خلال مقياس فنتوري</h3><p class="en">Flow Through a Venturi-meter</p></div></div>
+            <p>نقيس التصريف بمقياس فنتوري ونحسب معامل التصريف Cd من مقارنة التصريف الفعلي بالنظري.</p>
+            <div class="formula">Q<sub>th</sub> = k √h · C<sub>d</sub> = Q<sub>act</sub> / Q<sub>th</sub></div>
+            <div class="result"><small>النتيجة</small><span>Cd = 0.829 · Re = 21493</span></div>
+          </article>
+          <article class="exp">
+            <div class="exp-top"><span class="exp-no">5</span><div><h3>صدم نفث الماء</h3><p class="en">Impact of Water Jet</p></div></div>
+            <p>نقيس القوة اللي يسببها نفث الماء على لوح مستوٍ وعلى كأس نصف كروي، ونقارنها بالقوة النظرية من الزخم.</p>
+            <div class="formula">J<sub>plate</sub> = ρQv · J<sub>cup</sub> = 2ρQv</div>
+            <div class="result"><small>النتيجة</small><span>J = 8.12 N · Fx/J = 0.80</span></div>
+          </article>
+          <article class="exp">
+            <div class="exp-top"><span class="exp-no">6</span><div><h3>اتزان الأجسام الطافية</h3><p class="en">Stability of Floating Body</p></div></div>
+            <p>نوجد الارتفاع الميتاسنتري GM لجسم طافٍ عمليًا ونظريًا، ونفهم أثر ارتفاع مركز الثقل على الاستقرار.</p>
+            <div class="formula">GM = BM − BG &gt; 0 → stable</div>
+            <div class="result"><small>النتيجة</small><span>GM: theory 0.0629 m · test 0.0623 m</span></div>
+          </article>
         </div>
-        <div class="content">
-          <div class="skills">
-            <div class="skill">
-              <h3>HTML <small>متقدّم</small></h3>
-              <p>وسوم دلالية، نماذج، وإتاحة الوصول.</p>
-              <div class="meter"><i style="width: 85%"></i></div>
-            </div>
-            <div class="skill">
-              <h3>CSS <small>متقدّم</small></h3>
-              <p>Flexbox وGrid، متغيرات CSS، والوضع الداكن.</p>
-              <div class="meter"><i style="width: 80%"></i></div>
-            </div>
-            <div class="skill">
-              <h3>تصميم متجاوب <small>جيد</small></h3>
-              <p>استعلامات الوسائط ووحدات نسبية تبدأ من الجوال.</p>
-              <div class="meter"><i style="width: 70%"></i></div>
-            </div>
-            <div class="skill">
-              <h3>Git وGitHub <small>أتعلّم</small></h3>
-              <p>الفروع، الإيداعات، وطلبات الدمج.</p>
-              <div class="meter"><i style="width: 50%"></i></div>
-            </div>
-          </div>
+
+        <div class="guide-link">
+          <p><strong>دليل التجارب الكامل</strong>ملخص ومفاهيم ومفاتيح حل ومسائل محلولة خطوة بخطوة لكل تجربة، مع اختبار ذاتي.</p>
+          <a class="btn primary" href="https://claude.ai/artifact/Mav5sJtDyCXH2wTtf8z4vU">افتح الدليل</a>
         </div>
       </div>
     </section>
 
-    <section class="block" id="projects">
+    <section class="block" id="courses">
       <div class="wrap">
-        <div>
-          <h2>المشاريع</h2>
-          <p class="label">projects/</p>
-        </div>
-        <div class="content">
-          <div class="projects">
-            <article class="project">
-              <span class="status">قيد العمل</span>
-              <h3>الموقع الشخصي</h3>
-              <p>هذه الصفحة نفسها: موقع من ملف واحد بلا مكتبات، يدعم الوضع الداكن والجوال.</p>
-              <ul class="tags"><li>HTML</li><li>CSS</li></ul>
-            </article>
-            <article class="project">
-              <span class="status">مستودع</span>
-              <h3>my-projects</h3>
-              <p>المستودع الذي أجمع فيه تجاربي وتماريني في تطوير الويب خطوة بخطوة.</p>
-              <ul class="tags"><li>Git</li><li>GitHub</li></ul>
-            </article>
-            <article class="project">
-              <span class="status">التالي</span>
-              <h3>صفحة هبوط عربية</h3>
-              <p>تصميم صفحة تعريفية لمنتج بالعربية مع شبكة CSS Grid ورسوم متحركة خفيفة.</p>
-              <ul class="tags"><li>CSS Grid</li><li>Animation</li></ul>
-            </article>
-          </div>
-        </div>
+        <div class="block-head"><h2>مقررات أذاكرها</h2><span class="tag ltr">courses</span></div>
+        <ul class="courses">
+          <li><span class="code">CE 324</span><b>الهيدروليكا</b></li>
+          <li><span class="code now">CE 325</span><b>مختبر الهيدروليكا</b></li>
+          <li><span class="code">CE 360</span><b>التحليل الإنشائي ١</b></li>
+          <li><span class="code">CE 430</span><b>أنظمة النقل</b></li>
+          <li><span class="code">CE 481</span><b>ميكانيكا التربة</b></li>
+        </ul>
       </div>
     </section>
 
     <section class="block" id="contact">
       <div class="wrap">
-        <div>
-          <h2>تواصل</h2>
-          <p class="label">contact.html</p>
-        </div>
-        <div class="content">
-          <p>هل لديك فكرة مشروع أو ملاحظة على عملي؟ يسعدني أن أسمع منك.</p>
+        <div class="block-head"><h2>تواصل</h2><span class="tag ltr">contact</span></div>
+        <div class="contact">
+          <p>عندك ملاحظة على حل، أو تبي نذاكر مع بعض؟ تقدر توصلني هنا.</p>
           <ul class="contact-list">
             <li><span>GitHub</span><a href="https://github.com/yasseralqasm0-cmd">github.com/yasseralqasm0-cmd</a></li>
-            <li><span>المستودع</span><a href="https://github.com/yasseralqasm0-cmd/my-projects">yasseralqasm0-cmd/my-projects</a></li>
+            <li><span>المشاريع</span><a href="https://github.com/yasseralqasm0-cmd/my-projects">yasseralqasm0-cmd/my-projects</a></li>
           </ul>
         </div>
       </div>
@@ -308,7 +346,7 @@
   <footer>
     <div class="wrap">
       <span>© ٢٠٢٦ ياسر القاسم</span>
-      <span>مكتوب يدويًا بـ <code>HTML</code> و<code>CSS</code></span>
+      <span class="ltr">CE 325 · Hydraulics Laboratory</span>
     </div>
   </footer>
 </div>
