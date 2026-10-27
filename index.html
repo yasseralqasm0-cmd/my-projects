@@ -1,0 +1,314 @@
+<title>ياسر القاسم</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: single right-to-left column, hero with a CSS-drawn eight-point star, then about / skills / projects / contact */
+  :root {
+    --bg: #f2f5f5;
+    --surface: #ffffff;
+    --ink: #13292e;
+    --muted: #5a6f73;
+    --line: #d5dfe0;
+    --teal: #0f5c66;
+    --saffron: #c9821f;
+    --code-bg: #0f2a2f;
+    --code-fg: #d9ecec;
+    --font-display: "Reem Kufi", "IBM Plex Sans Arabic", system-ui, sans-serif;
+    --font-body: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+    --step--1: 0.875rem;
+    --step-0: 1.0625rem;
+    --step-1: 1.375rem;
+    --step-2: 1.875rem;
+    --step-3: clamp(2.5rem, 6vw + 1rem, 4.25rem);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0c1a1d; --surface: #12262a; --ink: #e4eeee; --muted: #93a9ac;
+      --line: #22393d; --teal: #4fb3bf; --saffron: #e6a54a;
+      --code-bg: #081215; --code-fg: #d9ecec; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0c1a1d; --surface: #12262a; --ink: #e4eeee; --muted: #93a9ac;
+    --line: #22393d; --teal: #4fb3bf; --saffron: #e6a54a;
+    --code-bg: #081215; --code-fg: #d9ecec; color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { animation: none !important; transition: none !important; } }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: var(--step-0);
+    line-height: 1.8;
+  }
+  .wrap {
+    max-width: 68rem;
+    margin-inline: auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  a { color: var(--teal); text-underline-offset: 0.25em; }
+  a:focus-visible { outline: 2px solid var(--saffron); outline-offset: 3px; border-radius: 2px; }
+  h1, h2, h3 { font-family: var(--font-display); line-height: 1.25; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+
+  /* Header */
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+  header.site {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  header.site .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-block: 0.85rem; flex-wrap: wrap; }
+  .brand { font-family: var(--font-display); font-size: var(--step-1); color: var(--ink); text-decoration: none; }
+  .brand span { color: var(--saffron); }
+  nav ul { display: flex; gap: 1.25rem; list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
+  nav a { color: var(--muted); text-decoration: none; font-weight: 500; font-size: var(--step--1); }
+  nav a:hover { color: var(--teal); }
+
+  /* Hero */
+  .hero .wrap { display: grid; grid-template-columns: 1.3fr 1fr; gap: 3rem; align-items: center; padding-block: 4.5rem 4rem; }
+  .eyebrow { font-family: var(--font-mono); font-size: var(--step--1); color: var(--saffron); letter-spacing: 0.04em; direction: ltr; text-align: right; }
+  .hero h1 { font-size: var(--step-3); margin-block: 0.5rem 1rem; }
+  .hero h1 em { font-style: normal; color: var(--teal); }
+  .hero .lede { color: var(--muted); max-width: 34rem; font-size: 1.125rem; }
+  .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 2rem; }
+  .btn {
+    display: inline-block; padding: 0.7rem 1.4rem; border-radius: 999px;
+    font-weight: 600; text-decoration: none; border: 1.5px solid var(--teal);
+    transition: background-color .2s, color .2s;
+  }
+  .btn.primary { background: var(--teal); color: var(--bg); }
+  .btn.primary:hover { background: transparent; color: var(--teal); }
+  .btn.ghost { color: var(--teal); }
+  .btn.ghost:hover { background: var(--teal); color: var(--bg); }
+
+  /* Eight-point star (khatam) built from two squares */
+  .star-box { position: relative; aspect-ratio: 1; max-width: 100%; width: min(22rem, 100%); justify-self: center; }
+  .star-box .sq {
+    position: absolute; inset: 14%;
+    border: 2px solid var(--teal);
+    background: color-mix(in srgb, var(--teal) 7%, transparent);
+  }
+  .star-box .sq.b { transform: rotate(45deg); border-color: var(--saffron); background: color-mix(in srgb, var(--saffron) 7%, transparent); animation: turn 40s linear infinite; }
+  .star-box .core {
+    position: absolute; inset: 31%; display: grid; place-items: center;
+    border-radius: 50%; background: var(--surface); border: 1px solid var(--line);
+    font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); direction: ltr; text-align: center; line-height: 1.5;
+  }
+  .star-box .core b { display: block; font-family: var(--font-display); color: var(--ink); font-size: 1.6rem; font-weight: 700; }
+  @keyframes turn { to { transform: rotate(405deg); } }
+
+  /* Sections */
+  section.block { border-top: 1px solid var(--line); }
+  section.block > .wrap { padding-block: 4rem; display: grid; grid-template-columns: 14rem 1fr; gap: 2.5rem; }
+  .block h2 { font-size: var(--step-2); }
+  .block .label { font-family: var(--font-mono); font-size: var(--step--1); color: var(--muted); direction: ltr; text-align: right; margin-top: 0.35rem; }
+  .content { min-width: 0; display: grid; gap: 1.25rem; }
+  .content p { max-width: 62ch; }
+
+  /* Code card */
+  pre.code {
+    margin: 0; overflow-x: auto; direction: ltr; text-align: left;
+    background: var(--code-bg); color: var(--code-fg);
+    border-radius: 10px; padding: 1.25rem 1.5rem;
+    font-family: var(--font-mono); font-size: 0.9rem; line-height: 1.7;
+  }
+  .code .sel { color: #f0b765; } .code .prop { color: #7fd3dc; } .code .val { color: #b9e3a4; } .code .cm { color: #6f8e92; }
+
+  /* Skills */
+  .skills { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; }
+  .skill { padding-block: 0.5rem; }
+  .skill h3 { font-size: var(--step-1); display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
+  .skill h3 small { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); font-weight: 400; }
+  .skill p { color: var(--muted); font-size: var(--step--1); margin-top: 0.25rem; }
+  .meter { height: 6px; border-radius: 3px; background: var(--line); margin-top: 0.75rem; overflow: hidden; }
+  .meter i { display: block; height: 100%; background: var(--teal); border-radius: inherit; }
+
+  /* Projects */
+  .projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1.25rem; }
+  .project {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;
+    transition: border-color .2s, transform .2s;
+  }
+  .project:hover { border-color: var(--teal); transform: translateY(-2px); }
+  .project h3 { font-size: var(--step-1); }
+  .project p { color: var(--muted); font-size: var(--step--1); flex: 1; }
+  .tags { display: flex; gap: 0.4rem; flex-wrap: wrap; list-style: none; padding: 0; margin: 0; }
+  .tags li {
+    font-family: var(--font-mono); font-size: 0.75rem; direction: ltr;
+    padding: 0.15rem 0.6rem; border-radius: 999px;
+    color: var(--teal); background: color-mix(in srgb, var(--teal) 10%, transparent);
+  }
+  .status { font-size: 0.8rem; font-weight: 600; color: var(--saffron); }
+
+  /* Contact */
+  .contact-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; }
+  .contact-list li { display: flex; justify-content: space-between; gap: 1rem; padding-block: 0.9rem; border-bottom: 1px dashed var(--line); flex-wrap: wrap; }
+  .contact-list li span { color: var(--muted); }
+  .contact-list a { direction: ltr; font-family: var(--font-mono); font-size: 0.95rem; word-break: break-all; }
+
+  footer { border-top: 1px solid var(--line); }
+  footer .wrap { padding-block: 2rem; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; color: var(--muted); font-size: var(--step--1); }
+  footer code { font-family: var(--font-mono); direction: ltr; unicode-bidi: isolate; }
+
+  @media (max-width: 760px) {
+    .hero .wrap { grid-template-columns: 1fr; padding-block: 3rem; gap: 2rem; }
+    .star-box { width: min(15rem, 80%); order: -1; }
+    section.block > .wrap { grid-template-columns: 1fr; gap: 1.25rem; padding-block: 3rem; }
+    nav ul { gap: 0.9rem; }
+  }
+</style>
+
+<div dir="rtl" lang="ar">
+  <header class="site">
+    <div class="wrap">
+      <a class="brand" href="#top">ياسر<span>.</span></a>
+      <nav aria-label="التنقل الرئيسي">
+        <ul>
+          <li><a href="#about">عنّي</a></li>
+          <li><a href="#skills">المهارات</a></li>
+          <li><a href="#projects">المشاريع</a></li>
+          <li><a href="#contact">تواصل</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap">
+        <div>
+          <p class="eyebrow">&lt;html dir="rtl" lang="ar"&gt;</p>
+          <h1>مرحبًا، أنا <em>ياسر القاسم</em><br>أبني صفحات ويب بالعربية</h1>
+          <p class="lede">مطوّر واجهات أتعلّم وأبني باستخدام HTML وCSS. أهتم بأن تكون الصفحة سريعة، واضحة، وتعمل من اليمين إلى اليسار كما ينبغي على كل الشاشات.</p>
+          <div class="actions">
+            <a class="btn primary" href="#projects">شاهد مشاريعي</a>
+            <a class="btn ghost" href="#contact">تواصل معي</a>
+          </div>
+        </div>
+        <div class="star-box" aria-hidden="true">
+          <div class="sq a"></div>
+          <div class="sq b"></div>
+          <div class="core"><div><b>٨</b>HTML · CSS</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="about">
+      <div class="wrap">
+        <div>
+          <h2>عنّي</h2>
+          <p class="label">about.css</p>
+        </div>
+        <div class="content">
+          <p>بدأت رحلتي مع الويب بفضول بسيط: كيف تتحول بضعة أسطر من الوسوم إلى صفحة يراها الناس؟ اليوم أكتب واجهات من الصفر، وأجمع مشاريعي في مستودع واحد على GitHub لأتابع تقدمي.</p>
+          <p>أحب التفاصيل الصغيرة التي تصنع الفرق: محاذاة صحيحة للنص العربي، خطوط مقروءة، وتصميم يتكيّف مع الجوال قبل الحاسوب.</p>
+          <pre class="code"><span class="cm">/* هكذا أبدأ كل صفحة */</span>
+<span class="sel">.ياسر</span> {
+  <span class="prop">direction</span>: <span class="val">rtl</span>;
+  <span class="prop">font-family</span>: <span class="val">"IBM Plex Sans Arabic"</span>;
+  <span class="prop">display</span>: <span class="val">grid</span>;
+  <span class="prop">gap</span>: <span class="val">clamp(1rem, 3vw, 2rem)</span>;
+}</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="skills">
+      <div class="wrap">
+        <div>
+          <h2>المهارات</h2>
+          <p class="label">skills.css</p>
+        </div>
+        <div class="content">
+          <div class="skills">
+            <div class="skill">
+              <h3>HTML <small>متقدّم</small></h3>
+              <p>وسوم دلالية، نماذج، وإتاحة الوصول.</p>
+              <div class="meter"><i style="width: 85%"></i></div>
+            </div>
+            <div class="skill">
+              <h3>CSS <small>متقدّم</small></h3>
+              <p>Flexbox وGrid، متغيرات CSS، والوضع الداكن.</p>
+              <div class="meter"><i style="width: 80%"></i></div>
+            </div>
+            <div class="skill">
+              <h3>تصميم متجاوب <small>جيد</small></h3>
+              <p>استعلامات الوسائط ووحدات نسبية تبدأ من الجوال.</p>
+              <div class="meter"><i style="width: 70%"></i></div>
+            </div>
+            <div class="skill">
+              <h3>Git وGitHub <small>أتعلّم</small></h3>
+              <p>الفروع، الإيداعات، وطلبات الدمج.</p>
+              <div class="meter"><i style="width: 50%"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="projects">
+      <div class="wrap">
+        <div>
+          <h2>المشاريع</h2>
+          <p class="label">projects/</p>
+        </div>
+        <div class="content">
+          <div class="projects">
+            <article class="project">
+              <span class="status">قيد العمل</span>
+              <h3>الموقع الشخصي</h3>
+              <p>هذه الصفحة نفسها: موقع من ملف واحد بلا مكتبات، يدعم الوضع الداكن والجوال.</p>
+              <ul class="tags"><li>HTML</li><li>CSS</li></ul>
+            </article>
+            <article class="project">
+              <span class="status">مستودع</span>
+              <h3>my-projects</h3>
+              <p>المستودع الذي أجمع فيه تجاربي وتماريني في تطوير الويب خطوة بخطوة.</p>
+              <ul class="tags"><li>Git</li><li>GitHub</li></ul>
+            </article>
+            <article class="project">
+              <span class="status">التالي</span>
+              <h3>صفحة هبوط عربية</h3>
+              <p>تصميم صفحة تعريفية لمنتج بالعربية مع شبكة CSS Grid ورسوم متحركة خفيفة.</p>
+              <ul class="tags"><li>CSS Grid</li><li>Animation</li></ul>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="contact">
+      <div class="wrap">
+        <div>
+          <h2>تواصل</h2>
+          <p class="label">contact.html</p>
+        </div>
+        <div class="content">
+          <p>هل لديك فكرة مشروع أو ملاحظة على عملي؟ يسعدني أن أسمع منك.</p>
+          <ul class="contact-list">
+            <li><span>GitHub</span><a href="https://github.com/yasseralqasm0-cmd">github.com/yasseralqasm0-cmd</a></li>
+            <li><span>المستودع</span><a href="https://github.com/yasseralqasm0-cmd/my-projects">yasseralqasm0-cmd/my-projects</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>© ٢٠٢٦ ياسر القاسم</span>
+      <span>مكتوب يدويًا بـ <code>HTML</code> و<code>CSS</code></span>
+    </div>
+  </footer>
+</div>
